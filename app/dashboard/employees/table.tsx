@@ -3,57 +3,13 @@
 import { useState } from 'react';
 import { DataTable } from '@/components/Table/data-table';
 import { createColumns } from './columns';
-import { Employee, User, Shift } from '@prisma/client';
 import { ColumnDef } from '@tanstack/react-table';
 import { EmployeeDialog } from './employee-dialog';
 import { EmployeeDetailsDialog } from './employee-details-dialog';
 import { AlertDialog } from '@/components/ui/alert-dialog';
 import { deleteEmployee, deleteMultipleEmployees } from './actions';
 import { toast } from 'sonner';
-
-// Type for the employee data with relations (matching the query structure)
-type EmployeeWithRelations = Employee & {
-    user: User;
-    employeeShifts: Array<{
-        shift: Shift;
-    }>;
-};
-
-// Type that matches the columns definition
-type EmployeeData = {
-    id: number
-    userId: number
-    firstName: string
-    lastName: string
-    image: string | null
-    designation: string | null
-    birthDate: Date | null
-    email: string
-    phone: string | null
-    joiningDate: Date | null
-    type: "FULL_TIME" | "PERMANENT" | "INTERN" | "PART_TIME" | "CONTRACT" | "TEMPORARY"
-    status: "ACTIVE" | "INACTIVE" | "SUSPENDED" | "TERMINATED" | "ON_LEAVE" | "RESIGNED"
-    deviceUserId: string | null
-    createdAt: Date
-    updatedAt: Date
-    user: {
-        id: number
-        name: string
-        email: string
-        createdAt: Date
-        updatedAt: Date
-    }
-    shifts: Array<{
-        shift: {
-            id: number
-            name: string
-            checkInTime: string
-            checkOutTime: string
-            createdAt: Date
-            updatedAt: Date
-        }
-    }>
-}
+import { EmployeeWithRelations, EmployeeTableData } from '@/types/employee';
 
 interface Props {
     employees: EmployeeWithRelations[];
@@ -99,12 +55,12 @@ export default function EmployeesTable({
         setIsCreateDialogOpen(true);
     };
 
-    const handleEdit = (employee: EmployeeData) => {
+    const handleEdit = (employee: EmployeeTableData) => {
         setSelectedEmployee(employee as unknown as EmployeeWithRelations);
         setIsEditDialogOpen(true);
     };
 
-    const handleViewDetails = (employee: EmployeeData) => {
+    const handleViewDetails = (employee: EmployeeTableData) => {
         setSelectedEmployeeForDetails(employee as unknown as EmployeeWithRelations);
         setIsDetailsDialogOpen(true);
     };
@@ -131,7 +87,7 @@ export default function EmployeesTable({
         }
     };
 
-    const handleDeleteSingle = (employee: EmployeeData) => {
+    const handleDeleteSingle = (employee: EmployeeTableData) => {
         setEmployeeToDelete(employee as unknown as EmployeeWithRelations);
         setIsDeleteConfirmOpen(true);
     };

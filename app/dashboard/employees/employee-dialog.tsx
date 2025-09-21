@@ -1,25 +1,12 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { EmployeeForm } from "./employee-form"
 import { toast } from "sonner"
 import { createEmployee, updateEmployee } from "./actions"
-
-interface EmployeeData {
-  id?: number
-  firstName: string
-  lastName: string
-  email: string
-  phone: string
-  designation: string
-  birthDate: Date | undefined
-  joiningDate: Date | undefined
-  type: "FULL_TIME" | "PERMANENT" | "INTERN" | "PART_TIME" | "CONTRACT" | "TEMPORARY"
-  status: "ACTIVE" | "INACTIVE" | "SUSPENDED" | "TERMINATED" | "ON_LEAVE" | "RESIGNED"
-  image: string
-  deviceUserId: string
-}
+import { EmployeeData } from "@/types/employee"
 
 interface EmployeeDialogProps {
   isOpen: boolean
@@ -30,6 +17,7 @@ interface EmployeeDialogProps {
 
 export function EmployeeDialog({ isOpen, onClose, employee, mode }: EmployeeDialogProps) {
   const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
 
   const handleSubmit = async (formData: Omit<EmployeeData, "id">) => {
     setIsLoading(true)
@@ -50,6 +38,7 @@ export function EmployeeDialog({ isOpen, onClose, employee, mode }: EmployeeDial
           lastName: formData.lastName,
           email: formData.email,
           phone: formData.phone,
+          address: formData.address,
           designation: formData.designation,
           birthDate: formData.birthDate,
           joiningDate: formData.joiningDate,
@@ -71,6 +60,7 @@ export function EmployeeDialog({ isOpen, onClose, employee, mode }: EmployeeDial
           : "Employee updated successfully!"
       )
       
+      router.refresh()
       onClose()
       
     } catch (error) {

@@ -4,16 +4,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { CalendarDays, Mail, Phone, User, Briefcase, Clock, Users, MapPin, CheckCircle } from 'lucide-react';
-import { Employee, User as PrismaUser, Shift } from '@prisma/client';
+import { CalendarDays, Mail, Phone, User, Clock, MapPin, CheckCircle } from 'lucide-react';
 import { format } from 'date-fns';
-
-type EmployeeWithRelations = Employee & {
-    user: PrismaUser;
-    employeeShifts: Array<{
-        shift: Shift;
-    }>;
-};
+import { EmployeeWithRelations } from '@/types/employee';
 
 interface EmployeeDetailsDialogProps {
     isOpen: boolean;
@@ -98,7 +91,9 @@ export function EmployeeDetailsDialog({ isOpen, onClose, employee }: EmployeeDet
                                 {employee.designation || 'No designation specified'}
                             </p>
                             <div className='flex items-center space-x-2 mt-2'>
-                                <Badge variant='outline'>ID: {employee.deviceUserId || 'Not assigned'}</Badge>
+                                <Badge variant='outline'>
+                                    ID: {employee.deviceUserId || 'Not assigned'}
+                                </Badge>
                                 <Badge className={getStatusColor(employee.status)}>
                                     {employee.status.replace('_', ' ')}
                                 </Badge>
@@ -123,21 +118,27 @@ export function EmployeeDetailsDialog({ isOpen, onClose, employee }: EmployeeDet
                                     <Phone className='h-4 w-4 text-muted-foreground' />
                                     <div>
                                         <p className='text-sm font-medium'>Phone</p>
-                                        <p className='text-sm text-muted-foreground'>{employee.phone || 'Not provided'}</p>
+                                        <p className='text-sm text-muted-foreground'>
+                                            {employee.phone || 'Not provided'}
+                                        </p>
                                     </div>
                                 </div>
                                 <div className='flex items-center space-x-3'>
                                     <Mail className='h-4 w-4 text-muted-foreground' />
                                     <div>
                                         <p className='text-sm font-medium'>Email</p>
-                                        <p className='text-sm text-muted-foreground'>{employee.email || 'Not provided'}</p>
+                                        <p className='text-sm text-muted-foreground'>
+                                            {employee.email || 'Not provided'}
+                                        </p>
                                     </div>
                                 </div>
                                 <div className='flex items-center space-x-3'>
                                     <MapPin className='h-4 w-4 text-muted-foreground' />
                                     <div>
                                         <p className='text-sm font-medium'>Address</p>
-                                        <p className='text-sm text-muted-foreground'>{(employee as any).address || 'Not provided'}</p>
+                                        <p className='text-sm text-muted-foreground'>
+                                            {(employee as any).address || 'Not provided'}
+                                        </p>
                                     </div>
                                 </div>
                             </CardContent>
@@ -199,7 +200,9 @@ export function EmployeeDetailsDialog({ isOpen, onClose, employee }: EmployeeDet
                                     <User className='h-4 w-4 text-muted-foreground' />
                                     <div>
                                         <p className='text-sm font-medium'>Device User ID</p>
-                                        <p className='text-sm text-muted-foreground'>{employee.deviceUserId || 'Not assigned'}</p>
+                                        <p className='text-sm text-muted-foreground'>
+                                            {employee.deviceUserId || 'Not assigned'}
+                                        </p>
                                     </div>
                                 </div>
                                 <div className='flex items-center space-x-3'>
@@ -251,13 +254,23 @@ export function EmployeeDetailsDialog({ isOpen, onClose, employee }: EmployeeDet
                                                             {employeeShift.shift.name}
                                                         </h4>
                                                         <p className='text-sm text-muted-foreground'>
-                                                            {format(new Date(`2000-01-01T${employeeShift.shift.checkInTime}`), 'h:mm a')} - {format(new Date(`2000-01-01T${employeeShift.shift.checkOutTime}`), 'h:mm a')}
+                                                            {format(
+                                                                new Date(
+                                                                    `2000-01-01T${employeeShift.shift.checkInTime}`
+                                                                ),
+                                                                'h:mm a'
+                                                            )}{' '}
+                                                            -{' '}
+                                                            {format(
+                                                                new Date(
+                                                                    `2000-01-01T${employeeShift.shift.checkOutTime}`
+                                                                ),
+                                                                'h:mm a'
+                                                            )}
                                                         </p>
                                                     </div>
                                                 </div>
-                                                <Badge variant='outline'>
-                                                    Active
-                                                </Badge>
+                                                <Badge variant='outline'>Active</Badge>
                                             </div>
                                         </div>
                                     ))}

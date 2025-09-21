@@ -129,11 +129,37 @@ export async function PUT(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const { id } = await request.json();
+    const { id, ids } = await request.json();
 
+    // Handle multiple delete
+    if (ids && Array.isArray(ids)) {
+      if (ids.length === 0) {
+        return NextResponse.json(
+          { success: false, error: 'No employee IDs provided' },
+          { status: 400 }
+        );
+      }
+
+      const numericIds = ids.map(id => parseInt(id)).filter(id => !isNaN(id));
+      if (numericIds.length === 0) {
+        return NextResponse.json(
+          { success: false, error: 'Invalid employee IDs provided' },
+          { status: 400 }
+        );
+      }
+
+      const result = await employeeQueries.deleteMany(numericIds);
+      return NextResponse.json({ 
+        success: true, 
+        message: `${result.count} employee(s) deleted successfully`,
+        deletedCount: result.count
+      });
+    }
+
+    // Handle single delete
     if (!id) {
       return NextResponse.json(
-        { success: false, error: 'Employee ID is required' },
+        { success: false, error: 'Employee ID or IDs are required' },
         { status: 400 }
       );
     }
@@ -141,9 +167,9 @@ export async function DELETE(request: NextRequest) {
     await employeeQueries.delete(parseInt(id));
     return NextResponse.json({ success: true, message: 'Employee deleted successfully' });
   } catch (error) {
-    console.error('Error deleting employee:', error);
+    console.error('Error deleting employee(s):', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to delete employee' },
+      { success: false, error: 'Failed to delete employee(s)' },
       { status: 500 }
     );
   }

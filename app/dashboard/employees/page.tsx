@@ -1,8 +1,17 @@
 import { employeeQueries } from '@/queries/employees';
 import EmployeesTable from './table';
+import { Employee, User, Shift } from '@prisma/client';
+
+// Type for the employee data with relations (matching the query structure)
+type EmployeeWithRelations = Employee & {
+    user: User;
+    employeeShifts: Array<{
+        shift: Shift;
+    }>;
+};
 
 export default async function EmployeesPage() {
-  const employees = await employeeQueries.getAll();
+  const employees = await employeeQueries.getAll() as unknown as EmployeeWithRelations[];
 
   console.log(employees);
 

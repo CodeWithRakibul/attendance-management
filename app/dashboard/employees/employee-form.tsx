@@ -73,15 +73,15 @@ export function EmployeeForm({ initialData, onSubmit, onCancel, isLoading = fals
   const validateForm = (): boolean => {
     const newErrors: Partial<Record<keyof EmployeeFormData, string>> = {}
 
-    if (!formData.firstName.trim()) {
+    if (!formData.firstName || /^\s*$/.test(formData.firstName)) {
       newErrors.firstName = "First name is required"
     }
 
-    if (!formData.lastName.trim()) {
+    if (!formData.lastName || /^\s*$/.test(formData.lastName)) {
       newErrors.lastName = "Last name is required"
     }
 
-    if (!formData.email.trim()) {
+    if (!formData.email || /^\s*$/.test(formData.email)) {
       newErrors.email = "Email is required"
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "Please enter a valid email address"

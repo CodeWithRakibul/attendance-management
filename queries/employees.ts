@@ -7,7 +7,7 @@ export const employeeQueries = {
         include: {
             user: true,
             employeeShifts: { include: { shift: true } }
-        }
+        } as any
     }),
 
     getById: (id: number) => prisma.employee.findUnique({
@@ -15,7 +15,7 @@ export const employeeQueries = {
         include: {
             user: true,
             employeeShifts: { include: { shift: true } }
-        }
+        } as any
     }),
 
     getByEmail: (email: string) => prisma.employee.findUnique({
@@ -23,15 +23,15 @@ export const employeeQueries = {
         include: {
             user: true,
             employeeShifts: { include: { shift: true } }
-        }
+        } as any
     }),
 
-    getByDeviceUserId: (deviceUserId: string) => prisma.employee.findUnique({
+    getByDeviceUserId: (deviceUserId: string) => prisma.employee.findFirst({
         where: { deviceUserId },
         include: {
             user: true,
             employeeShifts: { include: { shift: true } }
-        }
+        } as any
     }),
 
     create: (data: {
@@ -71,7 +71,7 @@ export const employeeQueries = {
             include: {
                 user: true,
                 employeeShifts: { include: { shift: true } }
-            }
+            } as any
         });
     },
 
@@ -94,27 +94,31 @@ export const employeeQueries = {
         include: {
             user: true,
             employeeShifts: { include: { shift: true } }
-        }
+        } as any
     }),
 
     delete: (id: number) => prisma.employee.delete({
         where: { id }
     }),
 
+    deleteMany: (ids: number[]) => prisma.employee.deleteMany({
+        where: { id: { in: ids } }
+    }),
+
     // Search employees by name, email, or designation
     search: (query: string) => prisma.employee.findMany({
         where: {
             OR: [
-                { firstName: { contains: query, mode: 'insensitive' } },
-                { lastName: { contains: query, mode: 'insensitive' } },
-                { email: { contains: query, mode: 'insensitive' } },
-                { designation: { contains: query, mode: 'insensitive' } }
+                { firstName: { contains: query } },
+                { lastName: { contains: query } },
+                { email: { contains: query } },
+                { designation: { contains: query } }
             ]
         },
         include: {
             user: true,
             employeeShifts: { include: { shift: true } }
-        },
+        } as any,
         orderBy: { createdAt: 'desc' }
     }),
 
@@ -124,7 +128,7 @@ export const employeeQueries = {
         include: {
             user: true,
             employeeShifts: { include: { shift: true } }
-        },
+        } as any,
         orderBy: { createdAt: 'desc' }
     }),
 
@@ -134,7 +138,7 @@ export const employeeQueries = {
         include: {
             user: true,
             employeeShifts: { include: { shift: true } }
-        },
+        } as any,
         orderBy: { createdAt: 'desc' }
     })
 };

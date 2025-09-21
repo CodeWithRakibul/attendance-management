@@ -68,7 +68,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { IconPlus, IconSearch } from "@tabler/icons-react"
+import { IconPlus, IconSearch, IconTrash } from "@tabler/icons-react"
 
 interface FilterOption {
   label: string
@@ -88,6 +88,9 @@ interface DataTableProps<T> {
   onCreateNew?: () => void
   createNewLabel?: string
   showCreateButton?: boolean
+  onDeleteSelected?: (selectedIds: string[]) => Promise<void>
+  showDeleteButton?: boolean
+  deleteButtonLabel?: string
   filters?: {
     columnId: string
     title: string
@@ -194,6 +197,9 @@ export function DataTable<T>({
   onCreateNew,
   createNewLabel = "Create New",
   showCreateButton = false,
+  onDeleteSelected,
+  showDeleteButton = false,
+  deleteButtonLabel = "Delete Selected",
   filters = [],
 }: DataTableProps<T>) {
   const [data, setData] = React.useState(() => initialData)
@@ -206,6 +212,7 @@ export function DataTable<T>({
     pageIndex: 0,
     pageSize,
   })
+  const [isDeleting, setIsDeleting] = React.useState(false)
 
   const sortableId = React.useId()
   const sensors = useSensors(
@@ -256,6 +263,37 @@ export function DataTable<T>({
         const newIndex = dataIds.indexOf(over.id)
         return arrayMove(data, oldIndex, newIndex)
       })
+    }
+  }
+
+  const handleDeleteSelected = async () => {
+    if (!onDeleteSelected) return
+    
+    const selectedRows = table.getFilteredSelectedRowModel().rows
+    const selectedIds = selectedRows.map(row => getRowId(row.original))
+    
+    if (selectedIds.length === 0) return
+    
+    const confirmMessage = selectedIds.length === 1 
+      ? "Are you sure you want to delete this item?" 
+      : `Are you sure you want to delete ${selectedIds.length} items?`
+    
+    if (!confirm(confirmMessage)) return
+    
+    try {
+      setIsDeleting(true)
+      await onDeleteSelected(selectedIds)
+      
+      // Remove deleted items from local state
+      setData(prevData => prevData.filter(item => !selectedIds.includes(getRowId(item))))
+      
+      // Clear selection
+      setRowSelection({})
+    } catch (error) {
+      console.error('Failed to delete items:', error)
+      alert('Failed to delete items. Please try again.')
+    } finally {
+      setIsDeleting(false)
     }
   }
 
@@ -396,14 +434,29 @@ export function DataTable<T>({
               </div>
             )}
           </div>
-          {showCreateButton && onCreateNew && (
-            <Button onClick={onCreateNew} className="flex items-center gap-2">
-              <IconPlus className="h-4 w-4" />
-              <span className="sr-only sm:not-sr-only">
-                {createNewLabel}
-              </span>
-            </Button>
-          )}
+          <div className="flex items-center gap-2">
+            {showDeleteButton && onDeleteSelected && enableRowSelection && Object.keys(rowSelection).length > 0 && (
+              <Button 
+                onClick={handleDeleteSelected}
+                disabled={isDeleting}
+                variant="destructive"
+                className="flex items-center gap-2"
+              >
+                <IconTrash className="h-4 w-4" />
+                <span className="sr-only sm:not-sr-only">
+                  {isDeleting ? "Deleting..." : deleteButtonLabel}
+                </span>
+              </Button>
+            )}
+            {showCreateButton && onCreateNew && (
+              <Button onClick={onCreateNew} className="flex items-center gap-2">
+                <IconPlus className="h-4 w-4" />
+                <span className="sr-only sm:not-sr-only">
+                  {createNewLabel}
+                </span>
+              </Button>
+            )}
+          </div>
         </div>
       )}
       <div className="overflow-hidden rounded-lg border">

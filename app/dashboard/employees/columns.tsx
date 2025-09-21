@@ -69,7 +69,8 @@ const getTypeColor = (type: string) => {
 
 export const createColumns = (
     onEdit?: (employee: EmployeeData) => void,
-    onViewDetails?: (employee: EmployeeData) => void
+    onViewDetails?: (employee: EmployeeData) => void,
+    onDelete?: (employee: EmployeeData) => void
 ): ColumnDef<EmployeeData>[] => [
     {
         id: "select",
@@ -204,7 +205,12 @@ export const createColumns = (
                         View Details
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
+                    <DropdownMenuItem 
+                        variant="destructive"
+                        onClick={() => onDelete?.(row.original)}
+                    >
+                        Delete
+                    </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
         ),

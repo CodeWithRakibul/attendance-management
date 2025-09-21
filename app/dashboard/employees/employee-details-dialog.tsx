@@ -137,7 +137,7 @@ export function EmployeeDetailsDialog({ isOpen, onClose, employee }: EmployeeDet
                                     <MapPin className='h-4 w-4 text-muted-foreground' />
                                     <div>
                                         <p className='text-sm font-medium'>Address</p>
-                                        <p className='text-sm text-muted-foreground'>{employee.address || 'Not provided'}</p>
+                                        <p className='text-sm text-muted-foreground'>{(employee as any).address || 'Not provided'}</p>
                                     </div>
                                 </div>
                             </CardContent>
@@ -238,9 +238,9 @@ export function EmployeeDetailsDialog({ isOpen, onClose, employee }: EmployeeDet
                         <CardContent>
                             {employee.employeeShifts && employee.employeeShifts.length > 0 ? (
                                 <div className='space-y-4'>
-                                    {employee.employeeShifts.map((employeeShift) => (
+                                    {employee.employeeShifts.map((employeeShift, index) => (
                                         <div
-                                            key={employeeShift.id}
+                                            key={`${employee.id}-shift-${index}`}
                                             className='p-4 border rounded-lg'
                                         >
                                             <div className='flex items-center justify-between'>
@@ -282,13 +282,13 @@ export function EmployeeDetailsDialog({ isOpen, onClose, employee }: EmployeeDet
                         <CardContent className='space-y-4'>
                             <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                                 <div>
-                                    <p className='text-sm text-gray-500'>Username</p>
-                                    <p className='font-medium'>{employee.user.username}</p>
+                                    <p className='text-sm text-gray-500'>Name</p>
+                                    <p className='font-medium'>{employee.user.name}</p>
                                 </div>
 
                                 <div>
-                                    <p className='text-sm text-gray-500'>Role</p>
-                                    <Badge variant='outline'>{employee.user.role}</Badge>
+                                    <p className='text-sm text-gray-500'>Email</p>
+                                    <p className='font-medium'>{employee.user.email}</p>
                                 </div>
 
                                 <div>

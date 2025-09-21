@@ -1,5 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { employeeShiftQueries } from '@/queries/employeeShifts';
+
+export async function GET() {
+  try {
+    const employeeShifts = await employeeShiftQueries.getAll();
+    return NextResponse.json({ success: true, data: employeeShifts });
+  } catch (error) {
+    console.error('Error fetching employee shifts:', error);
+    return NextResponse.json(
+      { success: false, error: 'Failed to fetch employee shifts' },
+      { status: 500 }
+    );
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,15 +25,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const employeeShift = await prisma.employeeShift.create({
-      data: {
-        employeeId: parseInt(employeeId),
-        shiftId: parseInt(shiftId)
-      },
-      include: {
-        employee: true,
-        shift: true
-      }
+    const employeeShift = await employeeShiftQueries.create({
+      employeeId: parseInt(employeeId),
+      shiftId: parseInt(shiftId)
     });
 
     return NextResponse.json({ success: true, data: employeeShift });
@@ -44,15 +51,7 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    await prisma.employeeShift.delete({
-      where: {
-        employeeId_shiftId: {
-          employeeId: parseInt(employeeId),
-          shiftId: parseInt(shiftId)
-        }
-      }
-    });
-
+    await employeeShiftQueries.delete(parseInt(employeeId), parseInt(shiftId));
     return NextResponse.json({ success: true, message: 'Employee removed from shift' });
   } catch (error) {
     console.error('Error removing employee from shift:', error);

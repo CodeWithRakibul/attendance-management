@@ -2,20 +2,14 @@
 
 import * as React from "react"
 import {
-  IconCamera,
-  IconChartBar,
+  IconChalkboardTeacher,
+  IconClockHour3,
   IconDashboard,
-  IconDatabase,
-  IconFileAi,
-  IconFileDescription,
-  IconFileWord,
-  IconFolder,
   IconHelp,
-  IconListDetails,
   IconReport,
   IconSearch,
   IconSettings,
-  IconUsers,
+  IconUserCheck,
 } from "@tabler/icons-react"
 import { NavMain } from "@/components/nav-main"
 import { NavSecondary } from "@/components/nav-secondary"
@@ -38,24 +32,24 @@ const data = {
       icon: IconDashboard,
     },
     {
-      title: "Lifecycle",
-      url: "#",
-      icon: IconListDetails,
+      title: "Teachers",
+      url: "/teachers",
+      icon: IconChalkboardTeacher,
     },
     {
-      title: "Analytics",
-      url: "#",
-      icon: IconChartBar,
+      title: "Shifts",
+      url: "/shifts",
+      icon: IconClockHour3,
     },
     {
-      title: "Projects",
-      url: "#",
-      icon: IconFolder,
+      title: "Attendances",
+      url: "/attendances",
+      icon: IconUserCheck,
     },
     {
-      title: "Team",
-      url: "#",
-      icon: IconUsers,
+      title: "Report",
+      url: "/report",
+      icon: IconReport,
     },
   ],
   navSecondary: [

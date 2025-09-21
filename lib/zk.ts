@@ -1,4 +1,5 @@
-import ZKLib from 'zklib-js';
+
+import Zkteco from "zkteco-js"
 
 // ZKLib instance configuration
 const ZK_CONFIG = {
@@ -9,7 +10,7 @@ const ZK_CONFIG = {
 };
 
 // Create and export ZKLib instance
-export const zkInstance = new ZKLib(
+export const zkInstance = new Zkteco(
   ZK_CONFIG.ip,
   ZK_CONFIG.port,
   ZK_CONFIG.inport,

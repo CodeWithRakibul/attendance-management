@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { employeeQueries } from '@/queries/employees';
-import { EmployeeStatus, EmployeeType } from '@prisma/client';
+import { EmployeeStatus, EmployeeType } from '@/lib/employee-constants';
 
 export async function createEmployee(data: {
   userId: number;

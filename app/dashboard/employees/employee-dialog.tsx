@@ -28,8 +28,13 @@ export function EmployeeDialog({ isOpen, onClose, employee, mode }: EmployeeDial
         const createPayload = {
           ...formData,
           userId: 1, // Default user ID - you might want to get this from auth context
-          birthDate: formData.birthDate,
-          joiningDate: formData.joiningDate,
+          birthDate: formData.birthDate || undefined,
+          joiningDate: formData.joiningDate || undefined,
+          phone: formData.phone || undefined,
+          address: formData.address || undefined,
+          designation: formData.designation || undefined,
+          image: formData.image || undefined,
+          deviceUserId: formData.deviceUserId || undefined,
         };
         result = await createEmployee(createPayload);
       } else if (mode === "edit" && employee?.id) {
@@ -37,15 +42,15 @@ export function EmployeeDialog({ isOpen, onClose, employee, mode }: EmployeeDial
           firstName: formData.firstName,
           lastName: formData.lastName,
           email: formData.email,
-          phone: formData.phone,
-          address: formData.address,
-          designation: formData.designation,
-          birthDate: formData.birthDate,
-          joiningDate: formData.joiningDate,
+          phone: formData.phone || undefined,
+          address: formData.address || undefined,
+          designation: formData.designation || undefined,
+          birthDate: formData.birthDate || undefined,
+          joiningDate: formData.joiningDate || undefined,
           type: formData.type,
           status: formData.status,
-          image: formData.image,
-          deviceUserId: formData.deviceUserId,
+          image: formData.image || undefined,
+          deviceUserId: formData.deviceUserId || undefined,
         };
         result = await updateEmployee(employee.id, updatePayload);
       }

@@ -1,4 +1,5 @@
-import { PrismaClient, EmployeeType, EmployeeStatus } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import { EmployeeType, EmployeeStatus } from '@/lib/employee-constants';
 import { createUser } from '@/lib/zk/users';
 
 const prisma = new PrismaClient();

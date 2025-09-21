@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { employeeQueries } from '@/queries/employees';
 
 export async function GET(
@@ -60,6 +61,7 @@ export async function PUT(
 
     const updatedEmployee = await employeeQueries.update(employeeId, updateData);
 
+    revalidatePath('/dashboard/employees');
     return NextResponse.json({ success: true, data: updatedEmployee });
   } catch (error) {
     console.error('Error updating employee:', error);
@@ -78,6 +80,7 @@ export async function DELETE(
     const employeeId = parseInt(params.id);
     await employeeQueries.delete(employeeId);
     
+    revalidatePath('/dashboard/employees');
     return NextResponse.json({ success: true, message: 'Employee deleted successfully' });
   } catch (error) {
     console.error('Error deleting employee:', error);

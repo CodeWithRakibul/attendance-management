@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { employeeQueries } from '@/queries/employees';
 
 export async function GET(request: NextRequest) {
@@ -69,6 +70,7 @@ export async function POST(request: NextRequest) {
       deviceUserId
     });
 
+    revalidatePath('/dashboard/employees');
     return NextResponse.json({ success: true, data: employee });
   } catch (error) {
     console.error('Error creating employee:', error);
@@ -117,6 +119,7 @@ export async function PUT(request: NextRequest) {
     if (deviceUserId !== undefined) updateData.deviceUserId = deviceUserId;
 
     const employee = await employeeQueries.update(parseInt(id), updateData);
+    revalidatePath('/dashboard/employees');
     return NextResponse.json({ success: true, data: employee });
   } catch (error) {
     console.error('Error updating employee:', error);
@@ -149,6 +152,7 @@ export async function DELETE(request: NextRequest) {
       }
 
       const result = await employeeQueries.deleteMany(numericIds);
+      revalidatePath('/dashboard/employees');
       return NextResponse.json({ 
         success: true, 
         message: `${result.count} employee(s) deleted successfully`,
@@ -165,6 +169,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     await employeeQueries.delete(parseInt(id));
+    revalidatePath('/dashboard/employees');
     return NextResponse.json({ success: true, message: 'Employee deleted successfully' });
   } catch (error) {
     console.error('Error deleting employee(s):', error);

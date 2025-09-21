@@ -2,6 +2,10 @@ import { employeeQueries } from '@/queries/employees';
 import EmployeesTable from './table';
 import { EmployeeWithRelations } from '@/types/employee';
 
+// Ensure this page always fetches fresh data
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function EmployeesPage() {
   const employees = await employeeQueries.getAll() as unknown as EmployeeWithRelations[];
 

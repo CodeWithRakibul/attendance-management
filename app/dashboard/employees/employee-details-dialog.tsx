@@ -4,14 +4,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { CalendarDays, Mail, Phone, User, Clock, MapPin, CheckCircle } from 'lucide-react';
-import { format } from 'date-fns';
-import { EmployeeWithRelations } from '@/types/employee';
+import { CalendarDays, Mail, Phone, User, MapPin, CheckCircle } from 'lucide-react';
+import { EmployeeTableData } from '@/types/employee';
 
 interface EmployeeDetailsDialogProps {
     isOpen: boolean;
     onClose: () => void;
-    employee: EmployeeWithRelations | null;
+    employee: EmployeeTableData | null;
 }
 
 export function EmployeeDetailsDialog({ isOpen, onClose, employee }: EmployeeDetailsDialogProps) {
@@ -228,7 +227,7 @@ export function EmployeeDetailsDialog({ isOpen, onClose, employee }: EmployeeDet
                     </div>
 
                     {/* Assigned Shifts */}
-                    <Card>
+                    {/* <Card>
                         <CardHeader>
                             <CardTitle className='flex items-center gap-2'>
                                 <Clock className='h-5 w-5' />
@@ -282,7 +281,7 @@ export function EmployeeDetailsDialog({ isOpen, onClose, employee }: EmployeeDet
                                 </div>
                             )}
                         </CardContent>
-                    </Card>
+                    </Card> */}
 
                     {/* User Account Information */}
                     <Card>

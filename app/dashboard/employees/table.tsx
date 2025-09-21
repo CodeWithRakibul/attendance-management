@@ -9,7 +9,7 @@ import { EmployeeDetailsDialog } from './employee-details-dialog';
 import { AlertDialog } from '@/components/ui/alert-dialog';
 import { deleteEmployee, deleteMultipleEmployees } from './actions';
 import { toast } from 'sonner';
-import { EmployeeWithRelations, EmployeeTableData } from '@/types/employee';
+import { EmployeeWithRelations, EmployeeTableData, EmployeeData } from '@/types/employee';
 
 interface Props {
     employees: EmployeeWithRelations[];
@@ -28,12 +28,13 @@ export default function EmployeesTable({
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
     const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
     const [selectedEmployee, setSelectedEmployee] = useState<EmployeeWithRelations | null>(null);
-    const [selectedEmployeeForDetails, setSelectedEmployeeForDetails] = useState<EmployeeWithRelations | null>(null);
-    
+    const [selectedEmployeeForDetails, setSelectedEmployeeForDetails] =
+        useState<EmployeeWithRelations | null>(null);
+
     // Confirmation dialog states
     const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
     const [isDeleteMultipleConfirmOpen, setIsDeleteMultipleConfirmOpen] = useState(false);
-    const [employeeToDelete, setEmployeeToDelete] = useState<EmployeeWithRelations | null>(null);
+    const [employeeToDelete, setEmployeeToDelete] = useState<EmployeeTableData | null>(null);
     const [selectedIdsToDelete, setSelectedIdsToDelete] = useState<string[]>([]);
 
     const statusFilters = enableFilter
@@ -72,13 +73,19 @@ export default function EmployeesTable({
 
     const confirmDeleteSelected = async () => {
         try {
-            const result = await deleteMultipleEmployees(selectedIdsToDelete.map(id => parseInt(id)));
-            
+            const result = await deleteMultipleEmployees(
+                selectedIdsToDelete.map((id) => parseInt(id))
+            );
+
             if (!result.success) {
                 throw new Error(result.error || 'Failed to delete employees');
             }
 
-            toast.success(`Successfully deleted ${selectedIdsToDelete.length} employee${selectedIdsToDelete.length > 1 ? 's' : ''}`);
+            toast.success(
+                `Successfully deleted ${selectedIdsToDelete.length} employee${
+                    selectedIdsToDelete.length > 1 ? 's' : ''
+                }`
+            );
             setIsDeleteMultipleConfirmOpen(false);
             setSelectedIdsToDelete([]);
         } catch (error) {
@@ -88,7 +95,7 @@ export default function EmployeesTable({
     };
 
     const handleDeleteSingle = (employee: EmployeeTableData) => {
-        setEmployeeToDelete(employee as unknown as EmployeeWithRelations);
+        setEmployeeToDelete(employee as EmployeeTableData);
         setIsDeleteConfirmOpen(true);
     };
 
@@ -97,7 +104,7 @@ export default function EmployeesTable({
 
         try {
             const result = await deleteEmployee(employeeToDelete.id);
-            
+
             if (!result.success) {
                 throw new Error(result.error || 'Failed to delete employee');
             }
@@ -126,7 +133,7 @@ export default function EmployeesTable({
                 onCreateNew={showCreateButton ? handleCreateNew : undefined}
                 showDeleteButton={true}
                 onDeleteSelected={handleDeleteSelected}
-                deleteButtonLabel="Delete Selected"
+                deleteButtonLabel='Delete Selected'
             />
             <EmployeeDialog
                 isOpen={isCreateDialogOpen}
@@ -148,35 +155,39 @@ export default function EmployeesTable({
                     setIsDetailsDialogOpen(false);
                     setSelectedEmployeeForDetails(null);
                 }}
-                employee={selectedEmployeeForDetails}
+                employee={selectedEmployeeForDetails as unknown as EmployeeTableData}
             />
-            
+
             {/* Single Delete Confirmation */}
             <AlertDialog
                 open={isDeleteConfirmOpen}
                 onOpenChange={setIsDeleteConfirmOpen}
-                title="Delete Employee"
+                title='Delete Employee'
                 description={
-                    employeeToDelete 
+                    employeeToDelete
                         ? `Are you sure you want to delete ${employeeToDelete.firstName} ${employeeToDelete.lastName}? This action cannot be undone.`
-                        : "Are you sure you want to delete this employee?"
+                        : 'Are you sure you want to delete this employee?'
                 }
-                confirmText="Delete"
-                cancelText="Cancel"
-                variant="destructive"
+                confirmText='Delete'
+                cancelText='Cancel'
+                variant='destructive'
                 onConfirm={confirmDeleteSingle}
                 onCancel={() => setEmployeeToDelete(null)}
             />
-            
+
             {/* Multiple Delete Confirmation */}
             <AlertDialog
                 open={isDeleteMultipleConfirmOpen}
                 onOpenChange={setIsDeleteMultipleConfirmOpen}
-                title="Delete Selected Employees"
-                description={`Are you sure you want to delete ${selectedIdsToDelete.length} selected employee${selectedIdsToDelete.length > 1 ? 's' : ''}? This action cannot be undone.`}
-                confirmText="Delete All"
-                cancelText="Cancel"
-                variant="destructive"
+                title='Delete Selected Employees'
+                description={`Are you sure you want to delete ${
+                    selectedIdsToDelete.length
+                } selected employee${
+                    selectedIdsToDelete.length > 1 ? 's' : ''
+                }? This action cannot be undone.`}
+                confirmText='Delete All'
+                cancelText='Cancel'
+                variant='destructive'
                 onConfirm={confirmDeleteSelected}
                 onCancel={() => setSelectedIdsToDelete([])}
             />

@@ -1,6 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -18,9 +17,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <SiteHeader />
                 <div className="flex flex-1 flex-col">
                     <div className="@container/main flex flex-1 flex-col gap-2">
-                        <ScrollArea className='h-[calc(100dvh-80px)]'>
-                            <div className='py-4 md:gap-6 md:py-6 px-4 lg:px-6'>{children}</div>
-                        </ScrollArea>
+                        <div className='py-4 md:py-6 px-4 lg:px-6'>{children}</div>
                     </div>
                 </div>
             </SidebarInset>

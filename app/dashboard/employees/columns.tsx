@@ -36,6 +36,8 @@ type EmployeeData = {
             name: string
             checkInTime: string
             checkOutTime: string
+            createdAt: Date
+            updatedAt: Date
         }
     }>
 }
@@ -65,7 +67,10 @@ const getTypeColor = (type: string) => {
     }
 }
 
-export const columns: ColumnDef<EmployeeData>[] = [
+export const createColumns = (
+    onEdit?: (employee: EmployeeData) => void,
+    onViewDetails?: (employee: EmployeeData) => void
+): ColumnDef<EmployeeData>[] => [
     {
         id: "select",
         header: ({ table }) => (
@@ -179,7 +184,7 @@ export const columns: ColumnDef<EmployeeData>[] = [
     },
     {
         id: "actions",
-        cell: () => (
+        cell: ({ row }) => (
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button
@@ -192,8 +197,12 @@ export const columns: ColumnDef<EmployeeData>[] = [
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-32">
-                    <DropdownMenuItem>Edit</DropdownMenuItem>
-                    <DropdownMenuItem>View Details</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => onEdit?.(row.original)}>
+                        Edit
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => onViewDetails?.(row.original)}>
+                        View Details
+                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
                 </DropdownMenuContent>
@@ -201,4 +210,7 @@ export const columns: ColumnDef<EmployeeData>[] = [
         ),
     },
 ]
+
+// Export the default columns for backward compatibility
+export const columns = createColumns()
 

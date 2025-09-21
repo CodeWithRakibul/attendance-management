@@ -6,7 +6,7 @@ export const employeeQueries = {
         orderBy: { createdAt: 'desc' },
         include: {
             user: true,
-            shifts: { include: { shift: true } }
+            employeeShifts: { include: { shift: true } }
         }
     }),
 
@@ -14,7 +14,7 @@ export const employeeQueries = {
         where: { id },
         include: {
             user: true,
-            shifts: { include: { shift: true } }
+            employeeShifts: { include: { shift: true } }
         }
     }),
 
@@ -22,7 +22,7 @@ export const employeeQueries = {
         where: { email },
         include: {
             user: true,
-            shifts: { include: { shift: true } }
+            employeeShifts: { include: { shift: true } }
         }
     }),
 
@@ -30,7 +30,7 @@ export const employeeQueries = {
         where: { deviceUserId },
         include: {
             user: true,
-            shifts: { include: { shift: true } }
+            employeeShifts: { include: { shift: true } }
         }
     }),
 
@@ -43,6 +43,7 @@ export const employeeQueries = {
         designation?: string;
         birthDate?: Date;
         phone?: string;
+        address?: string;
         joiningDate?: Date;
         type?: EmployeeType;
         status?: EmployeeStatus;
@@ -61,6 +62,7 @@ export const employeeQueries = {
         if (data.designation !== undefined) createData.designation = data.designation;
         if (data.birthDate !== undefined) createData.birthDate = data.birthDate;
         if (data.phone !== undefined) createData.phone = data.phone;
+        if (data.address !== undefined) createData.address = data.address;
         if (data.joiningDate !== undefined) createData.joiningDate = data.joiningDate;
         if (data.deviceUserId !== undefined) createData.deviceUserId = data.deviceUserId;
 
@@ -68,7 +70,7 @@ export const employeeQueries = {
             data: createData,
             include: {
                 user: true,
-                shifts: { include: { shift: true } }
+                employeeShifts: { include: { shift: true } }
             }
         });
     },
@@ -81,6 +83,7 @@ export const employeeQueries = {
         birthDate?: Date;
         email?: string;
         phone?: string;
+        address?: string;
         joiningDate?: Date;
         type?: EmployeeType;
         status?: EmployeeStatus;
@@ -90,7 +93,7 @@ export const employeeQueries = {
         data,
         include: {
             user: true,
-            shifts: { include: { shift: true } }
+            employeeShifts: { include: { shift: true } }
         }
     }),
 
@@ -110,7 +113,7 @@ export const employeeQueries = {
         },
         include: {
             user: true,
-            shifts: { include: { shift: true } }
+            employeeShifts: { include: { shift: true } }
         },
         orderBy: { createdAt: 'desc' }
     }),
@@ -120,7 +123,7 @@ export const employeeQueries = {
         where: { status },
         include: {
             user: true,
-            shifts: { include: { shift: true } }
+            employeeShifts: { include: { shift: true } }
         },
         orderBy: { createdAt: 'desc' }
     }),
@@ -130,7 +133,7 @@ export const employeeQueries = {
         where: { type },
         include: {
             user: true,
-            shifts: { include: { shift: true } }
+            employeeShifts: { include: { shift: true } }
         },
         orderBy: { createdAt: 'desc' }
     })

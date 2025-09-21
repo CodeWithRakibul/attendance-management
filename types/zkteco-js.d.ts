@@ -1,3 +1,5 @@
+import { User } from "./user";
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 declare module 'zkteco-js' {
   export default class Zkteco {
@@ -8,7 +10,7 @@ declare module 'zkteco-js' {
     getAttendances(): Promise<any[]>;
     clearAttendances(): Promise<boolean>;
     clearUsers(): Promise<boolean>;
-    setUser(userId: string, name: string, password?: string, role?: number, card?: string): Promise<boolean>;
+    setUser(user: User): Promise<boolean>;
     deleteUser(uid: number): Promise<boolean>;
     getDeviceInfo(): Promise<any>;
     getTime(): Promise<Date>;

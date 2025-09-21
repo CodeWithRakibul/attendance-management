@@ -20,7 +20,7 @@ export async function createUser(user: User) {
     try {
         await connect();
         //userid, name, password, role = 0, card = 0
-        const result = await zkInstance.setUser(user.userId, user.name, user.password, user.role || 0, user.cardno?.toString() || '0');
+        const result = await zkInstance.setUser(user.uid, user.userId, user.name, user.password, user.role || 0, user.cardno || 0);
 
         // Parse the buffer response if it's a Buffer
         if (Buffer.isBuffer(result)) {

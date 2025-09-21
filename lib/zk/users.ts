@@ -1,4 +1,4 @@
-import { connect, zkInstance } from "@/lib/zk"
+import { connect, zkInstance } from "@/lib/zk/zk"
 import type { User } from "@/types/user";
 import { BufferConverter } from "@/lib/buffer-utils";
 
@@ -19,8 +19,8 @@ export interface Employee extends User {
 export async function createUser(user: User) {
     try {
         await connect();
-        //uid, userid, name, password, role = 0, cardno = 0
-        const result = await zkInstance.setUser(user.uid || 0, user.userId, user.name, user.password, user.role || 0, user.cardno || 0);
+        //userid, name, password, role = 0, card = 0
+        const result = await zkInstance.setUser(user.userId, user.name, user.password, user.role || 0, user.cardno?.toString() || '0');
 
         // Parse the buffer response if it's a Buffer
         if (Buffer.isBuffer(result)) {
@@ -116,7 +116,7 @@ export async function updateUser(uid: number, updates: Partial<Omit<User, 'uid'>
             cardno: updates.cardno || 0
         };
 
-        const result = await zkInstance.setUser(uid, updatedUser.userId, updatedUser.name, updatedUser.password, updatedUser.role, updatedUser.cardno);
+        const result = await zkInstance.setUser(updatedUser.userId, updatedUser.name, updatedUser.password, updatedUser.role, updatedUser.cardno?.toString() || '0');
 
         // Parse the buffer response if it's a Buffer
         if (Buffer.isBuffer(result)) {

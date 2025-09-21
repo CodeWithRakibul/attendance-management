@@ -29,3 +29,19 @@ export async function connect(): Promise<boolean> {
     return false;
   }
 }
+
+// Create a new ZK instance with custom IP and port
+export function createZKInstance(ip: string, port: number, inport: number = 5000, timeout: number = 5200) {
+  return new Zkteco(ip, port, inport, timeout);
+}
+
+// Connect to a specific device
+export async function connectToDevice(ip: string, port: number): Promise<boolean> {
+  try {
+    const zk = createZKInstance(ip, port);
+    return await zk.createSocket();
+  } catch (error) {
+    console.error('Failed to connect to ZK device:', error);
+    return false;
+  }
+}

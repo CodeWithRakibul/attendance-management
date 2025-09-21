@@ -1,15 +1,15 @@
-"use client";
 import {
     Tabs,
     TabsContent,
     TabsList,
     TabsTrigger,
 } from "@/components/ui/tabs"
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { IconPlus } from "@tabler/icons-react";
-import { Label } from "./ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
-import { Badge } from "./ui/badge";
+import { Label } from "../ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { Badge } from "../ui/badge";
+import EmployeeTabContent from "./EmployeeTabContent";
 
 export default function TableOverview() {
     return (
@@ -59,9 +59,9 @@ export default function TableOverview() {
             </TabsContent>
             <TabsContent
                 value="employees"
-                className="flex flex-col px-4 lg:px-6"
+                className="flex flex-col"
             >
-                <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
+                <EmployeeTabContent />
             </TabsContent>
             <TabsContent value="shifts" className="flex flex-col px-4 lg:px-6">
                 <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>

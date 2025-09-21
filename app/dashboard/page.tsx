@@ -1,6 +1,6 @@
 
 import { SectionCards } from "@/components/section-cards"
-import TableOverview from "@/components/table-overview"
+import TableOverview from "@/components/Dashboard/table-overview"
 
 // import data from "./data.json"
 

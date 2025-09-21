@@ -2,7 +2,6 @@
 
 import * as React from "react"
 import {
-  IconChalkboardTeacher,
   IconClockHour3,
   IconDashboard,
   IconHelp,
@@ -10,6 +9,7 @@ import {
   IconSearch,
   IconSettings,
   IconUserCheck,
+  IconUsers,
 } from "@tabler/icons-react"
 import { NavMain } from "@/components/nav-main"
 import { NavSecondary } from "@/components/nav-secondary"
@@ -28,27 +28,27 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "#",
+      url: "/dashboard",
       icon: IconDashboard,
     },
     {
-      title: "Teachers",
-      url: "/teachers",
-      icon: IconChalkboardTeacher,
+      title: "Employees",
+      url: "/dashboard/employees",
+      icon: IconUsers,
     },
     {
       title: "Shifts",
-      url: "/shifts",
+      url: "/dashboard/shifts",
       icon: IconClockHour3,
     },
     {
       title: "Attendances",
-      url: "/attendances",
+      url: "/dashboard/attendances",
       icon: IconUserCheck,
     },
     {
       title: "Report",
-      url: "/report",
+      url: "/dashboard/report",
       icon: IconReport,
     },
   ],

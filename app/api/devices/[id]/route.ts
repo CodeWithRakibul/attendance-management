@@ -1,14 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { deviceQueries } from '@/queries/devices';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const device = await prisma.device.findUnique({
-      where: { id: parseInt(params.id) }
-    });
+    const device = await deviceQueries.getById(parseInt(params.id));
     
     if (!device) {
       return NextResponse.json(
@@ -41,11 +39,7 @@ export async function PUT(
     if (port) updateData.port = parseInt(port);
     if (status === 'connected') updateData.lastConnected = new Date();
 
-    const updatedDevice = await prisma.device.update({
-      where: { id: deviceId },
-      data: updateData
-    });
-
+    const updatedDevice = await deviceQueries.update(deviceId, updateData);
     return NextResponse.json({ success: true, data: updatedDevice });
   } catch (error) {
     console.error('Error updating device:', error);
@@ -62,9 +56,7 @@ export async function DELETE(
 ) {
   try {
     const deviceId = parseInt(params.id);
-    await prisma.device.delete({
-      where: { id: deviceId }
-    });
+    await deviceQueries.delete(deviceId);
     
     return NextResponse.json({ success: true, message: 'Device deleted successfully' });
   } catch (error) {

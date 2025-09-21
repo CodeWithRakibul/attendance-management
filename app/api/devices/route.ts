@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { deviceQueries } from '@/queries/devices';
 
 export async function GET() {
   try {
-    const devices = await prisma.device.findMany({
-      orderBy: { createdAt: 'desc' }
-    });
+    const devices = await deviceQueries.getAll();
     return NextResponse.json({ success: true, data: devices });
   } catch (error) {
     console.error('Error fetching devices:', error);
@@ -27,13 +25,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const device = await prisma.device.create({
-      data: {
-        name,
-        ip,
-        port: parseInt(port),
-        status: 'disconnected'
-      }
+    const device = await deviceQueries.create({
+      name,
+      ip,
+      port: parseInt(port)
     });
 
     return NextResponse.json({ success: true, data: device });

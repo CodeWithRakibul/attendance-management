@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { deviceQueries } from '@/queries/devices';
 import { prisma } from '@/lib/prisma';
 import { connectToDevice } from '@/lib/zk/zk';
 
@@ -18,10 +19,7 @@ export async function POST(
     }
 
     // Update device connection info
-    await prisma.device.update({
-      where: { id: deviceId },
-      data: { ip, port: parseInt(port) }
-    });
+    await deviceQueries.update(deviceId, { ip, port: parseInt(port) });
 
     // Log connection attempt
     await prisma.deviceConnection.create({
@@ -37,10 +35,7 @@ export async function POST(
       
       if (connected) {
         // Update device status to connected
-        await prisma.device.update({
-          where: { id: deviceId },
-          data: { status: 'connected', lastConnected: new Date() }
-        });
+        await deviceQueries.update(deviceId, { status: 'connected', lastConnected: new Date() });
         
         // Log successful connection
         await prisma.deviceConnection.create({
@@ -57,10 +52,7 @@ export async function POST(
         });
       } else {
         // Update device status to failed
-        await prisma.device.update({
-          where: { id: deviceId },
-          data: { status: 'failed' }
-        });
+        await deviceQueries.update(deviceId, { status: 'failed' });
         
         // Log failed connection
         await prisma.deviceConnection.create({
@@ -78,10 +70,7 @@ export async function POST(
       }
     } catch (connectionError) {
       // Update device status to error
-      await prisma.device.update({
-        where: { id: deviceId },
-        data: { status: 'error' }
-      });
+      await deviceQueries.update(deviceId, { status: 'error' });
       
       // Log connection error
       const errorMessage = connectionError instanceof Error ? connectionError.message : 'Unknown connection error';

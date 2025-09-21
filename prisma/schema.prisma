@@ -29,16 +29,24 @@ model Device {
 }
 
 model Employee {
-  id          Int             @id @default(autoincrement())
-  userId      Int
-  name        String
-  phone       String?
-  designation String?
-  status      EmployeeStatus  @default("ACTIVE")
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
-  user        User            @relation(fields: [userId], references: [id])
-  shifts      EmployeeShift[]
+  id           Int             @id @default(autoincrement())
+  userId       Int
+  firstName    String
+  lastName     String
+  image        String?
+  designation  String?
+  birthDate    DateTime?
+  email        String          @unique
+  phone        String?
+  joiningDate  DateTime?
+  type         EmployeeType    @default(FULL_TIME)
+  status       EmployeeStatus  @default(ACTIVE)
+  deviceUserId String?         // ZKTeco device user ID
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  
+  user   User            @relation(fields: [userId], references: [id])
+  shifts EmployeeShift[]
 }
 
 model Shift {
@@ -71,9 +79,20 @@ model DeviceConnection {
   device         Device    @relation(fields: [deviceId], references: [id])
 }
 
+enum EmployeeType {
+  FULL_TIME
+  PERMANENT
+  INTERN
+  PART_TIME
+  CONTRACT
+  TEMPORARY
+}
+
 enum EmployeeStatus {
   ACTIVE
   INACTIVE
   SUSPENDED
   TERMINATED
+  ON_LEAVE
+  RESIGNED
 }

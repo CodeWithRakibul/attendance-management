@@ -1,6 +1,5 @@
 import { prisma } from '@/lib/prisma';
-
-type EmployeeStatus = 'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'TERMINATED';
+import { EmployeeStatus, EmployeeType } from '@prisma/client';
 
 export const employeeQueries = {
     getAll: () => prisma.employee.findMany({
@@ -19,20 +18,51 @@ export const employeeQueries = {
         }
     }),
 
+    getByEmail: (email: string) => prisma.employee.findUnique({
+        where: { email },
+        include: {
+            user: true,
+            shifts: { include: { shift: true } }
+        }
+    }),
+
+    getByDeviceUserId: (deviceUserId: string) => prisma.employee.findUnique({
+        where: { deviceUserId },
+        include: {
+            user: true,
+            shifts: { include: { shift: true } }
+        }
+    }),
+
     create: (data: {
         userId: number;
-        name: string;
-        phone?: string;
+        firstName: string;
+        lastName: string;
+        email: string;
+        image?: string;
         designation?: string;
+        birthDate?: Date;
+        phone?: string;
+        joiningDate?: Date;
+        type?: EmployeeType;
         status?: EmployeeStatus;
+        deviceUserId?: string;
     }) => {
         const createData: any = {
             userId: data.userId,
-            name: data.name,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            email: data.email,
+            type: data.type || 'FULL_TIME',
             status: data.status || 'ACTIVE'
         };
-        if (data.phone !== undefined) createData.phone = data.phone;
+        
+        if (data.image !== undefined) createData.image = data.image;
         if (data.designation !== undefined) createData.designation = data.designation;
+        if (data.birthDate !== undefined) createData.birthDate = data.birthDate;
+        if (data.phone !== undefined) createData.phone = data.phone;
+        if (data.joiningDate !== undefined) createData.joiningDate = data.joiningDate;
+        if (data.deviceUserId !== undefined) createData.deviceUserId = data.deviceUserId;
 
         return prisma.employee.create({
             data: createData,
@@ -44,10 +74,17 @@ export const employeeQueries = {
     },
 
     update: (id: number, data: {
-        name?: string;
-        phone?: string;
+        firstName?: string;
+        lastName?: string;
+        image?: string;
         designation?: string;
+        birthDate?: Date;
+        email?: string;
+        phone?: string;
+        joiningDate?: Date;
+        type?: EmployeeType;
         status?: EmployeeStatus;
+        deviceUserId?: string;
     }) => prisma.employee.update({
         where: { id },
         data,
@@ -59,5 +96,42 @@ export const employeeQueries = {
 
     delete: (id: number) => prisma.employee.delete({
         where: { id }
+    }),
+
+    // Search employees by name, email, or designation
+    search: (query: string) => prisma.employee.findMany({
+        where: {
+            OR: [
+                { firstName: { contains: query, mode: 'insensitive' } },
+                { lastName: { contains: query, mode: 'insensitive' } },
+                { email: { contains: query, mode: 'insensitive' } },
+                { designation: { contains: query, mode: 'insensitive' } }
+            ]
+        },
+        include: {
+            user: true,
+            shifts: { include: { shift: true } }
+        },
+        orderBy: { createdAt: 'desc' }
+    }),
+
+    // Get employees by status
+    getByStatus: (status: EmployeeStatus) => prisma.employee.findMany({
+        where: { status },
+        include: {
+            user: true,
+            shifts: { include: { shift: true } }
+        },
+        orderBy: { createdAt: 'desc' }
+    }),
+
+    // Get employees by type
+    getByType: (type: EmployeeType) => prisma.employee.findMany({
+        where: { type },
+        include: {
+            user: true,
+            shifts: { include: { shift: true } }
+        },
+        orderBy: { createdAt: 'desc' }
     })
 };

@@ -30,15 +30,35 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const { name, phone, designation, status } = await request.json();
+    const { 
+      firstName, 
+      lastName, 
+      image, 
+      designation, 
+      birthDate, 
+      email, 
+      phone, 
+      joiningDate, 
+      type, 
+      status, 
+      deviceUserId 
+    } = await request.json();
     const employeeId = parseInt(params.id);
 
-    const updatedEmployee = await employeeQueries.update(employeeId, {
-      name,
-      phone,
-      designation,
-      status
-    });
+    const updateData: any = {};
+    if (firstName !== undefined) updateData.firstName = firstName;
+    if (lastName !== undefined) updateData.lastName = lastName;
+    if (image !== undefined) updateData.image = image;
+    if (designation !== undefined) updateData.designation = designation;
+    if (birthDate !== undefined) updateData.birthDate = new Date(birthDate);
+    if (email !== undefined) updateData.email = email;
+    if (phone !== undefined) updateData.phone = phone;
+    if (joiningDate !== undefined) updateData.joiningDate = new Date(joiningDate);
+    if (type !== undefined) updateData.type = type;
+    if (status !== undefined) updateData.status = status;
+    if (deviceUserId !== undefined) updateData.deviceUserId = deviceUserId;
+
+    const updatedEmployee = await employeeQueries.update(employeeId, updateData);
 
     return NextResponse.json({ success: true, data: updatedEmployee });
   } catch (error) {

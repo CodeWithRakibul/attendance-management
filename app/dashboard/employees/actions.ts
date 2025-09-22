@@ -24,23 +24,23 @@ export async function createEmployee(data: {
   try {
     const employee = await employeeQueries.create(data);
 
-    const timestamp = new Date().getTime().toString();
-    const generatedUserId = timestamp;
-    // const uid = parseInt(timestamp.slice(-4));
-    const {data: totalUsers} = await getUsers();
+    // const timestamp = new Date().getTime().toString();
+    // const generatedUserId = timestamp;
+    // // const uid = parseInt(timestamp.slice(-4));
+    // const {data: totalUsers} = await getUsers();
 
-    console.log(totalUsers)
+    // console.log(totalUsers)
 
-    const deviceUser: User = { 
-        name: `${data.firstName}`,
-        password: '', 
-        userId: generatedUserId.slice(0, 6),
-        uid: parseInt(totalUsers.length + 150),
-    }
+    // const deviceUser: User = { 
+    //     name: `${data.firstName}`,
+    //     password: '', 
+    //     userId: generatedUserId.slice(0, 6),
+    //     uid: parseInt(totalUsers.length + 150),
+    // }
 
-    const createDeviceUser = await createUser(deviceUser);
+    // const createDeviceUser = await createUser(deviceUser);
 
-    console.log(createDeviceUser);
+    // console.log(createDeviceUser);
 
     revalidatePath('/dashboard/employees');
     return { success: true, data: employee };

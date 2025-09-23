@@ -2,41 +2,7 @@
 
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
-
-export type StudentFormData = {
-  studentId: string;
-  sessionId: string;
-  classId: string;
-  batchId: string;
-  sectionId: string;
-  roll: string;
-  personal: {
-    nameEn: string;
-    nameBn?: string;
-    dob: string;
-    gender: string;
-    bloodGroup?: string;
-    photoUrl?: string;
-  };
-  guardian: {
-    fatherName: string;
-    motherName: string;
-    occupations: {
-      father?: string;
-      mother?: string;
-    };
-    contact: {
-      smsNo: string;
-      altNo?: string;
-      email?: string;
-    };
-  };
-  address: {
-    present: string;
-    permanent: string;
-  };
-  status?: 'ACTIVE' | 'INACTIVE' | 'DISABLED';
-};
+import type { StudentFormData, StudentStatus } from '@/types/student';
 
 export async function getStudents() {
   try {
@@ -132,7 +98,7 @@ export async function createStudent(data: StudentFormData) {
         personal: data.personal,
         guardian: data.guardian,
         address: data.address,
-        status: data.status || 'ACTIVE',
+        status: (data.status as StudentStatus) || 'ACTIVE',
       },
       include: {
         session: true,
@@ -164,7 +130,7 @@ export async function updateStudent(id: string, data: Partial<StudentFormData>) 
         ...(data.personal && { personal: data.personal }),
         ...(data.guardian && { guardian: data.guardian }),
         ...(data.address && { address: data.address }),
-        ...(data.status && { status: data.status }),
+        ...(data.status && { status: data.status as StudentStatus }),
       },
       include: {
         session: true,

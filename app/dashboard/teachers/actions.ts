@@ -2,8 +2,10 @@
 
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
+import type { TeacherFormData, TeacherStatus, LeaveType, LeaveStatus } from '@/types/teacher';
 
-export type TeacherFormData = {
+// Custom form data for teacher creation (different structure than global type)
+export type TeacherCreateFormData = {
   teacherId: string;
   personal: {
     nameEn: string;
@@ -32,7 +34,7 @@ export type TeacherFormData = {
     paymentMethod?: string;
   };
   joiningDate: string;
-  status?: 'ACTIVE' | 'INACTIVE' | 'DISABLED';
+  status?: TeacherStatus;
 };
 
 export async function getTeachers() {
@@ -92,7 +94,7 @@ export async function getTeacher(id: string) {
   }
 }
 
-export async function createTeacher(data: TeacherFormData) {
+export async function createTeacher(data: TeacherCreateFormData) {
   try {
     // Get the active session
     const session = await prisma.session.findFirst({
@@ -130,7 +132,7 @@ export async function createTeacher(data: TeacherFormData) {
   }
 }
 
-export async function updateTeacher(id: string, data: Partial<TeacherFormData>) {
+export async function updateTeacher(id: string, data: Partial<TeacherCreateFormData>) {
   try {
     const teacher = await prisma.teacher.update({
       where: { id },
@@ -179,11 +181,11 @@ export async function deleteTeacher(id: string) {
 
 export async function createTeacherLeave(data: {
   teacherId: string;
-  leaveType: 'SICK' | 'CASUAL' | 'ANNUAL' | 'MATERNITY' | 'EMERGENCY';
+  leaveType: LeaveType;
   startDate: string;
   endDate: string;
   reason: string;
-  status?: 'PENDING' | 'APPROVED' | 'REJECTED';
+  status?: LeaveStatus;
 }) {
   try {
     const leave = await prisma.teacherLeave.create({
@@ -208,7 +210,7 @@ export async function createTeacherLeave(data: {
   }
 }
 
-export async function updateTeacherLeave(id: string, status: 'APPROVED' | 'REJECTED', approvedBy?: string) {
+export async function updateTeacherLeave(id: string, status: LeaveStatus, approvedBy?: string) {
   try {
     const leave = await prisma.teacherLeave.update({
       where: { id },

@@ -2,11 +2,9 @@
 
 import { prisma } from '../prisma';
 
-export interface DashboardSummary {
-  totalStudents: number;
-  activeTeachers: number;
-  pendingFees: number;
-  todayAttendance: number;
+import type { DashboardSummary } from '@/types/common';
+
+interface ExtendedDashboardSummary extends DashboardSummary {
   totalRevenue: number;
   monthlyGrowth: {
     students: number;
@@ -15,7 +13,7 @@ export interface DashboardSummary {
   };
 }
 
-export async function getDashboardSummary(): Promise<DashboardSummary> {
+export async function getDashboardSummary(): Promise<ExtendedDashboardSummary> {
   try {
     // Get current date info
     const today = new Date();

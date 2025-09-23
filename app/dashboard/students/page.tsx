@@ -8,48 +8,7 @@ import { IconPlus, IconUsers } from '@tabler/icons-react';
 import { studentsColumns } from './columns';
 import { StudentDialog } from './student-dialog';
 import { getStudents } from './actions';
-import { Student, Session, Class, Batch, Section, StudentNote, Collection, AttendanceStudent, FeeMaster, Teacher } from '@prisma/client';
-
-// Type for student with all relations and proper JSON field types
-type StudentWithRelations = Student & {
-  session: Session;
-  class: Class;
-  batch: Batch;
-  section: Section;
-  notes: (StudentNote & {
-    staff: Teacher;
-  })[];
-  collections: (Collection & {
-    feeMaster: FeeMaster;
-  })[];
-  attendanceStudent: AttendanceStudent[];
-} & {
-  personal: {
-    nameEn: string;
-    nameBn?: string;
-    dob: string;
-    gender: string;
-    bloodGroup?: string;
-    photoUrl?: string;
-  };
-  guardian: {
-    fatherName: string;
-    motherName: string;
-    occupations: {
-      father?: string;
-      mother?: string;
-    };
-    contact: {
-      smsNo: string;
-      altNo?: string;
-      email?: string;
-    };
-  };
-  address: {
-    present: string;
-    permanent: string;
-  };
-};
+import type { StudentWithRelations } from '@/types/student';
 
 export default function StudentsPage() {
   const [students, setStudents] = useState<StudentWithRelations[]>([]);

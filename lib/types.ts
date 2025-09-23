@@ -1,27 +1,20 @@
-import { 
-  User, 
-  Device, 
-  Employee, 
-  Shift, 
-  EmployeeShift, 
-  DeviceConnection,
-  EmployeeType,
-  EmployeeStatus 
+// Import specific types to avoid circular dependency
+import type { 
+  User, Employee, Shift, EmployeeShift, Device, DeviceConnection,
+  EmployeeType, EmployeeStatus, ApiResponse, PaginatedResponse,
+  SelectOption, SortConfig, SortDirection, DateRange
 } from '@prisma/client';
 
 // Re-export Prisma types
 export type { 
-  User, 
-  Device, 
-  Employee, 
-  Shift, 
-  EmployeeShift, 
-  DeviceConnection,
-  EmployeeType,
-  EmployeeStatus 
+  User, Employee, Shift, EmployeeShift, Device, DeviceConnection,
+  EmployeeType, EmployeeStatus
 };
 
-// Extended types with relations
+// Re-export common types
+export type { ApiResponse, PaginatedResponse, SelectOption, SortConfig, SortDirection, DateRange } from '@/types/common';
+
+// Legacy employee system types (keeping for backward compatibility)
 export type UserWithEmployees = User & {
   employees: Employee[];
 };
@@ -47,7 +40,7 @@ export type DeviceWithConnections = Device & {
   connections: DeviceConnection[];
 };
 
-// Form data types (for creating/updating)
+// Legacy form data types
 export interface UserFormData {
   name: string;
   email: string;
@@ -82,7 +75,7 @@ export interface DeviceFormData {
   status?: string;
 }
 
-// Table data types (for display)
+// Legacy table data types
 export type EmployeeTableData = {
   id: number;
   userId: number;
@@ -140,24 +133,7 @@ export type ShiftTableData = Shift & {
   };
 };
 
-// API response types
-export interface ApiResponse<T = any> {
-  success: boolean;
-  data?: T;
-  message?: string;
-  error?: string;
-}
-
-export interface PaginatedResponse<T> extends ApiResponse<T[]> {
-  pagination?: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-}
-
-// Filter and search types
+// Legacy filter types
 export interface EmployeeFilters {
   type?: EmployeeType;
   status?: EmployeeStatus;
@@ -173,25 +149,6 @@ export interface DeviceFilters {
 export interface ShiftFilters {
   search?: string;
 }
-
-// Sort types
-export type SortDirection = 'asc' | 'desc';
-
-export interface SortConfig {
-  field: string;
-  direction: SortDirection;
-}
-
-// Common utility types
-export type SelectOption<T = string> = {
-  value: T;
-  label: string;
-};
-
-export type DateRange = {
-  from: Date;
-  to: Date;
-};
 
 // ZKTeco device types
 export interface ZKTecoUser {

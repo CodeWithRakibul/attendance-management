@@ -15,15 +15,21 @@ import {
 } from 'lucide-react';
 import { getDashboardSummary } from '@/lib/actions/dashboard';
 
-interface DashboardSummary {
+interface ExtendedDashboardSummary {
   totalStudents: number;
   activeTeachers: number;
   todayAttendance: number;
   pendingFees: number;
+  totalRevenue?: number;
+  monthlyGrowth?: {
+    students: number;
+    revenue: number;
+    attendance: number;
+  };
 }
 
 export function DashboardSummaryCards() {
-  const [summary, setSummary] = useState<DashboardSummary>({
+  const [summary, setSummary] = useState<ExtendedDashboardSummary>({
     totalStudents: 0,
     activeTeachers: 0,
     todayAttendance: 0,

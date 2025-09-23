@@ -20,7 +20,7 @@ import {
   IconDroplet,
   IconBuildingBank
 } from '@tabler/icons-react';
-import { StudentTableData } from '../types/student';
+import { StudentTableData } from '@/types/student';
 
 interface StudentDetailsDialogProps {
   student: StudentTableData | null;
@@ -82,7 +82,7 @@ export function StudentDetailsDialog({ student, open, onOpenChange }: StudentDet
                   <Avatar className="h-12 w-12">
                     <AvatarImage src={photoUrl || `/api/placeholder/150/150`} alt={nameEn} />
                     <AvatarFallback className="bg-blue-100 text-blue-600 text-lg font-semibold">
-                      {nameEn ? nameEn.split(' ').map((n: string) => n[0]).join('').toUpperCase() : 'ST'}
+                      {nameEn ? nameEn.split(' ').map((n: string) => n.charAt(0)).join('').toUpperCase() : 'ST'}
                     </AvatarFallback>
                   </Avatar>
                   <div>

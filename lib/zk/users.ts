@@ -20,7 +20,15 @@ export async function createUser(user: User) {
     try {
         await connect();
         //userid, name, password, role = 0, card = 0
-        const result = await zkInstance.setUser(user.uid, user.userId, user.name, user.password, user.role || 0, user.cardno || 0);
+        const zkUser = {
+            uid: user.uid || 0,
+            userid: user.userId,
+            name: user.name,
+            password: user.password,
+            role: user.role || 0,
+            cardno: user.cardno?.toString() || '0'
+        };
+        const result = await zkInstance.setUser(zkUser);
 
         // Parse the buffer response if it's a Buffer
         if (Buffer.isBuffer(result)) {
@@ -116,7 +124,15 @@ export async function updateUser(uid: number, updates: Partial<Omit<User, 'uid'>
             cardno: updates.cardno || 0
         };
 
-        const result = await zkInstance.setUser(updatedUser.userId, updatedUser.name, updatedUser.password, updatedUser.role, updatedUser.cardno?.toString() || '0');
+        const zkUser = {
+            uid: uid,
+            userid: updatedUser.userId,
+            name: updatedUser.name,
+            password: updatedUser.password,
+            role: updatedUser.role,
+            cardno: updatedUser.cardno?.toString() || '0'
+        };
+        const result = await zkInstance.setUser(zkUser);
 
         // Parse the buffer response if it's a Buffer
         if (Buffer.isBuffer(result)) {

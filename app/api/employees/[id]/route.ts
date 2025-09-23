@@ -4,10 +4,11 @@ import { employeeQueries } from '@/queries/employees';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const employee = await employeeQueries.getById(parseInt(params.id));
+    const { id } = await params;
+    const employee = await employeeQueries.getById(parseInt(id));
     
     if (!employee) {
       return NextResponse.json(
@@ -28,41 +29,15 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { 
-      firstName, 
-      lastName, 
-      image, 
-      designation, 
-      birthDate, 
-      email, 
-      phone, 
-      joiningDate, 
-      type, 
-      status, 
-      deviceUserId 
-    } = await request.json();
-    const employeeId = parseInt(params.id);
-
-    const updateData: any = {};
-    if (firstName !== undefined) updateData.firstName = firstName;
-    if (lastName !== undefined) updateData.lastName = lastName;
-    if (image !== undefined) updateData.image = image;
-    if (designation !== undefined) updateData.designation = designation;
-    if (birthDate !== undefined) updateData.birthDate = new Date(birthDate);
-    if (email !== undefined) updateData.email = email;
-    if (phone !== undefined) updateData.phone = phone;
-    if (joiningDate !== undefined) updateData.joiningDate = new Date(joiningDate);
-    if (type !== undefined) updateData.type = type;
-    if (status !== undefined) updateData.status = status;
-    if (deviceUserId !== undefined) updateData.deviceUserId = deviceUserId;
-
-    const updatedEmployee = await employeeQueries.update(employeeId, updateData);
+    const { id } = await params;
+    const body = await request.json();
+    const employee = await employeeQueries.update(parseInt(id), body);
 
     revalidatePath('/dashboard/employees');
-    return NextResponse.json({ success: true, data: updatedEmployee });
+    return NextResponse.json({ success: true, data: employee });
   } catch (error) {
     console.error('Error updating employee:', error);
     return NextResponse.json(
@@ -74,10 +49,11 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const employeeId = parseInt(params.id);
+    const { id } = await params;
+    const employeeId = parseInt(id);
     await employeeQueries.delete(employeeId);
     
     revalidatePath('/dashboard/employees');

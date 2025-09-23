@@ -111,6 +111,7 @@ async function createUserAccount(email: string, name: string) {
       data: {
         name: name,
         email: email,
+        password: 'password123', // Default password for seeded teachers
       }
     });
     return user;
@@ -134,11 +135,24 @@ async function createZKTecoUser(employee: any, userId: number) {
     console.log(`Creating ZKTeco user for ${employee.firstName} ${employee.lastName}...`);
     const result = await createUser(zkUser);
     
-    if (result.success) {
-      console.log(`✅ Successfully created ZKTeco user: ${employee.firstName} ${employee.lastName}`);
-      return userId.toString(); // Return the device user ID
+    if (typeof result === 'boolean') {
+      if (result) {
+        console.log(`✅ Successfully created ZKTeco user: ${employee.firstName} ${employee.lastName}`);
+        return userId.toString(); // Return the device user ID
+      } else {
+        console.error(`❌ Failed to create ZKTeco user`);
+        return null;
+      }
+    } else if (result && typeof result === 'object' && 'success' in result) {
+      if (result.success) {
+        console.log(`✅ Successfully created ZKTeco user: ${employee.firstName} ${employee.lastName}`);
+        return userId.toString(); // Return the device user ID
+      } else {
+        console.error(`❌ Failed to create ZKTeco user: ${result.message}`);
+        return null;
+      }
     } else {
-      console.error(`❌ Failed to create ZKTeco user: ${result.message}`);
+      console.error(`❌ Unexpected result type from createUser`);
       return null;
     }
   } catch (error) {
@@ -183,8 +197,7 @@ async function seedTeachers() {
               phone: teacherData.phone,
               joiningDate: teacherData.joiningDate,
               type: teacherData.type,
-              status: teacherData.status,
-              deviceUserId: deviceUserId
+              status: teacherData.status
             }
           });
 

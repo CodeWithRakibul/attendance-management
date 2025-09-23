@@ -1,7 +1,14 @@
-import { User } from "./user";
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 declare module 'zkteco-js' {
+  interface User {
+    uid: number;
+    userid: string;
+    name: string;
+    password?: string;
+    role?: number;
+    cardno?: string;
+  }
+
   export default class Zkteco {
     constructor(ip: string, port: number, inport?: number, timeout?: number);
     createSocket(): Promise<boolean>;

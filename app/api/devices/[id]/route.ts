@@ -3,10 +3,11 @@ import { deviceQueries } from '@/queries/devices';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const device = await deviceQueries.getById(parseInt(params.id));
+    const { id } = await params;
+    const device = await deviceQueries.getById(parseInt(id));
     
     if (!device) {
       return NextResponse.json(
@@ -27,20 +28,13 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { ip, port, status } = await request.json();
-    const deviceId = parseInt(params.id);
-
-    const updateData: any = {};
-    if (status) updateData.status = status;
-    if (ip) updateData.ip = ip;
-    if (port) updateData.port = parseInt(port);
-    if (status === 'connected') updateData.lastConnected = new Date();
-
-    const updatedDevice = await deviceQueries.update(deviceId, updateData);
-    return NextResponse.json({ success: true, data: updatedDevice });
+    const { id } = await params;
+    const body = await request.json();
+    const device = await deviceQueries.update(parseInt(id), body);
+    return NextResponse.json({ success: true, data: device });
   } catch (error) {
     console.error('Error updating device:', error);
     return NextResponse.json(
@@ -52,10 +46,11 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const deviceId = parseInt(params.id);
+    const { id } = await params;
+    const deviceId = parseInt(id);
     await deviceQueries.delete(deviceId);
     
     return NextResponse.json({ success: true, message: 'Device deleted successfully' });

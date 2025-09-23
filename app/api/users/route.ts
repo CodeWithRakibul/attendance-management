@@ -21,11 +21,11 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, email } = await request.json();
+    const { name, email, password } = await request.json();
 
-    if (!name || !email) {
+    if (!name || !email || !password) {
       return NextResponse.json(
-        { success: false, error: 'Name and email are required' },
+        { success: false, error: 'Name, email, and password are required' },
         { status: 400 }
       );
     }
@@ -33,7 +33,8 @@ export async function POST(request: NextRequest) {
     const user = await prisma.user.create({
       data: {
         name,
-        email
+        email,
+        password
       }
     });
 

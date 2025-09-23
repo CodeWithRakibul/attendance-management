@@ -1,5 +1,5 @@
 
-import Zkteco from "zkteco-js"
+import Zkteco from "zkteco-js";
 
 // ZKLib instance configuration
 const ZK_CONFIG = {

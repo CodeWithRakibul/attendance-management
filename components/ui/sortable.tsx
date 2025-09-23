@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import {
   type Announcements,
   closestCenter,
@@ -37,7 +38,6 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Slot } from "@radix-ui/react-slot";
-import * as React from "react";
 import * as ReactDOM from "react-dom";
 
 import { useComposedRefs } from "@/lib/compose-refs";
@@ -417,7 +417,7 @@ const SortableItem = React.forwardRef<HTMLDivElement, SortableItemProps>(
       isDragging,
     } = useSortable({ id: value, disabled });
 
-    const composedRef = useComposedRefs(forwardedRef, (node) => {
+    const composedRef = useComposedRefs(forwardedRef, (node: HTMLDivElement | null) => {
       if (disabled) return;
       setNodeRef(node);
       if (asHandle) setActivatorNodeRef(node);
@@ -492,7 +492,7 @@ const SortableItemHandle = React.forwardRef<
 
   const isDisabled = disabled ?? itemContext.disabled;
 
-  const composedRef = useComposedRefs(forwardedRef, (node) => {
+  const composedRef = useComposedRefs(forwardedRef, (node: HTMLButtonElement | null) => {
     if (!isDisabled) return;
     itemContext.setActivatorNodeRef(node);
   });

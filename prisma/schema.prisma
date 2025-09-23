@@ -7,13 +7,259 @@ datasource db {
   url      = "file:./data/dev.db"
 }
 
+// Session Management
+model Session {
+  id        String   @id @default(cuid())
+  year      String   @unique
+  status    SessionStatus @default(ACTIVE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  students     Student[]
+  teachers     Teacher[]
+  feeMasters   FeeMaster[]
+  collections  Collection[]
+  attendanceStudent AttendanceStudent[]
+  classes      Class[]
+  batches      Batch[]
+  sections     Section[]
+}
+
+// Academic Structure
+model Class {
+  id        String   @id @default(cuid())
+  name      String
+  sessionId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  session   Session   @relation(fields: [sessionId], references: [id])
+  students  Student[]
+  batches   Batch[]
+  sections  Section[]
+}
+
+model Batch {
+  id        String   @id @default(cuid())
+  name      String
+  classId   String
+  sessionId String
+  timeSlot  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  class     Class     @relation(fields: [classId], references: [id])
+  session   Session   @relation(fields: [sessionId], references: [id])
+  students  Student[]
+  attendanceStudent AttendanceStudent[]
+}
+
+model Section {
+  id        String   @id @default(cuid())
+  name      String
+  classId   String
+  sessionId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  class     Class     @relation(fields: [classId], references: [id])
+  session   Session   @relation(fields: [sessionId], references: [id])
+  students  Student[]
+}
+
+// Student Management
+model Student {
+  id            String        @id @default(cuid())
+  studentId     String        @unique
+  sessionId     String
+  classId       String
+  batchId       String
+  sectionId     String
+  roll          String
+  status        StudentStatus @default(ACTIVE)
+  disableReason String?
+  continuityTick Boolean      @default(false)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // Personal Information (JSON)
+  personal      Json // { nameBn, nameEn, dob, gender, bloodGroup, photoUrl }
+  
+  // Guardian Information (JSON)
+  guardian      Json // { fatherName, motherName, occupations, contact: { smsNo, altNo, email } }
+  
+  // Address Information (JSON)
+  address       Json // { present, permanent }
+
+  session       Session       @relation(fields: [sessionId], references: [id])
+  class         Class         @relation(fields: [classId], references: [id])
+  batch         Batch         @relation(fields: [batchId], references: [id])
+  section       Section       @relation(fields: [sectionId], references: [id])
+  
+  notes         StudentNote[]
+  collections   Collection[]
+  attendanceStudent AttendanceStudent[]
+}
+
+model StudentNote {
+  id        String   @id @default(cuid())
+  studentId String
+  staffId   String
+  note      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student   Student  @relation(fields: [studentId], references: [id])
+  staff     Teacher  @relation(fields: [staffId], references: [id])
+}
+
+// Teacher/Staff Management
+model Teacher {
+  id            String        @id @default(cuid())
+  staffId       String        @unique
+  sessionId     String
+  designation   String
+  subjects      Json          // Array of subjects
+  qualification String?
+  experience    String?
+  status        TeacherStatus @default(ACTIVE)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // Personal Information (JSON)
+  personal      Json // { nameBn, nameEn, dob, gender, bloodGroup }
+  
+  // Contact Information (JSON)
+  contact       Json // { mobile, email, facebook }
+  
+  // Address Information (JSON)
+  address       Json // { present, permanent }
+  
+  // Salary Information (JSON)
+  salaryInfo    Json // { basicSalary, allowances, advanceTaken }
+  
+  // Dashboard Information (JSON)
+  dashboard     Json? // { attendanceSummary, classTestsTaken }
+
+  session       Session       @relation(fields: [sessionId], references: [id])
+  
+  leaves        TeacherLeave[]
+  notes         StudentNote[]
+  attendanceStaff AttendanceStaff[]
+  collections   Collection[]
+}
+
+model TeacherLeave {
+  id          String      @id @default(cuid())
+  teacherId   String
+  leaveType   LeaveType
+  startDate   DateTime
+  endDate     DateTime
+  reason      String
+  status      LeaveStatus @default(PENDING)
+  appliedAt   DateTime    @default(now())
+  approvedAt  DateTime?
+  approvedBy  String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  teacher     Teacher     @relation(fields: [teacherId], references: [id])
+}
+
+// Attendance Management
+model AttendanceStudent {
+  id        String           @id @default(cuid())
+  studentId String
+  sessionId String
+  batchId   String
+  date      DateTime
+  status    AttendanceStatus
+  markedBy  String
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  student   Student          @relation(fields: [studentId], references: [id])
+  session   Session          @relation(fields: [sessionId], references: [id])
+  batch     Batch            @relation(fields: [batchId], references: [id])
+
+  @@unique([studentId, date])
+}
+
+model AttendanceStaff {
+  id        String           @id @default(cuid())
+  staffId   String
+  date      DateTime
+  status    AttendanceStatus
+  checkIn   DateTime?
+  checkOut  DateTime?
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  staff     Teacher          @relation(fields: [staffId], references: [id])
+
+  @@unique([staffId, date])
+}
+
+// Fee Management
+model FeeMaster {
+  id        String   @id @default(cuid())
+  sessionId String
+  name      String
+  amount    Float
+  type      FeeType
+  groupId   String?
+  dueDate   DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  session     Session      @relation(fields: [sessionId], references: [id])
+  collections Collection[]
+}
+
+model Collection {
+  id          String           @id @default(cuid())
+  studentId   String
+  sessionId   String
+  feeMasterId String
+  amount      Float
+  method      PaymentMethod    @default(CASH)
+  status      CollectionStatus @default(PENDING)
+  collectedBy String
+  receiptNo   String?
+  collectedAt DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  student     Student          @relation(fields: [studentId], references: [id])
+  session     Session          @relation(fields: [sessionId], references: [id])
+  feeMaster   FeeMaster        @relation(fields: [feeMasterId], references: [id])
+  collector   Teacher          @relation(fields: [collectedBy], references: [id])
+}
+
+// Legacy models (keeping for backward compatibility)
 model User {
   id        Int        @id @default(autoincrement())
   name      String
   email     String     @unique
+  password  String
+  role      UserRole   @default(EMPLOYEE)
+  isActive  Boolean    @default(true)
+  lastLogin DateTime?
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   employees Employee[]
+  sessions  UserSession[]
+}
+
+model UserSession {
+  id        String   @id @default(cuid())
+  userId    Int
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Device {
@@ -79,6 +325,68 @@ model DeviceConnection {
   device         Device    @relation(fields: [deviceId], references: [id])
 }
 
+// Enums
+enum SessionStatus {
+  ACTIVE
+  CLOSED
+}
+
+enum StudentStatus {
+  ACTIVE
+  INACTIVE
+  DISABLED
+}
+
+enum TeacherStatus {
+  ACTIVE
+  INACTIVE
+  DISABLED
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  LEAVE
+}
+
+enum LeaveType {
+  SICK
+  CASUAL
+  ANNUAL
+  MATERNITY
+  EMERGENCY
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum FeeType {
+  ADMISSION
+  MONTHLY
+  EXAM
+  TRANSPORT
+  LIBRARY
+  LABORATORY
+  OTHER
+}
+
+enum PaymentMethod {
+  CASH
+  BANK_TRANSFER
+  MOBILE_BANKING
+  CARD
+}
+
+enum CollectionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 enum EmployeeType {
   FULL_TIME
   PERMANENT
@@ -95,4 +403,11 @@ enum EmployeeStatus {
   TERMINATED
   ON_LEAVE
   RESIGNED
+}
+
+enum UserRole {
+  ADMIN
+  TEACHER
+  STUDENT
+  EMPLOYEE
 }

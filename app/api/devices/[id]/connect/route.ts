@@ -5,11 +5,12 @@ import { connectToDevice } from '@/lib/zk/zk';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const { ip, port } = await request.json();
-    const deviceId = parseInt(params.id);
+    const deviceId = parseInt(id);
 
     if (!ip || !port) {
       return NextResponse.json(

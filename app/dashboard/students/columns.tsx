@@ -247,9 +247,21 @@ export const studentsColumns = (onEdit: (student: Student) => void): ColumnDef<S
       const personal = student.personal as any;
       const dob = personal?.dob;
       if (!dob) return '-';
+      
+      const birthDate = new Date(dob);
+      const today = new Date();
+      const age = today.getFullYear() - birthDate.getFullYear() - 
+        (today.getMonth() < birthDate.getMonth() || 
+         (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate()) ? 1 : 0);
+      
       return (
-        <div className="text-sm font-mono bg-gray-50 px-2 py-1 rounded">
-          {new Date(dob).toLocaleDateString('en-GB')}
+        <div className="space-y-1">
+          <div className="text-sm font-mono">
+            {birthDate.toLocaleDateString('en-GB')}
+          </div>
+          <div className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded-full text-center font-medium">
+            {age} years old
+          </div>
         </div>
       );
     },

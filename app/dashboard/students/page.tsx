@@ -25,6 +25,7 @@ export default function StudentsPage() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [batchFilter, setBatchFilter] = useState('all');
   const [genderFilter, setGenderFilter] = useState('all');
+  const [sectionFilter, setSectionFilter] = useState('all');
 
   useEffect(() => {
     loadStudents();
@@ -84,8 +85,13 @@ export default function StudentsPage() {
       });
     }
 
+    // Section filter
+    if (sectionFilter !== 'all') {
+      filtered = filtered.filter(student => student.section.name === sectionFilter);
+    }
+
     setFilteredStudents(filtered);
-  }, [students, searchTerm, classFilter, statusFilter, batchFilter, genderFilter]);
+  }, [students, searchTerm, classFilter, statusFilter, batchFilter, genderFilter, sectionFilter]);
 
   const clearFilters = () => {
     setSearchTerm('');
@@ -93,11 +99,13 @@ export default function StudentsPage() {
     setStatusFilter('all');
     setBatchFilter('all');
     setGenderFilter('all');
+    setSectionFilter('all');
   };
 
   // Get unique values for filter options
   const uniqueClasses = [...new Set(students.map(s => s.class.name))];
   const uniqueBatches = [...new Set(students.map(s => s.batch.name))];
+  const uniqueSections = [...new Set(students.map(s => s.section.name))];
 
   const handleCreateNew = () => {
     setSelectedStudent(null);
@@ -200,54 +208,49 @@ export default function StudentsPage() {
         </Card>
       </div>
 
-      {/* Enhanced Filters */}
-      <Card className="border-0 shadow-sm bg-gradient-to-r from-blue-50 to-indigo-50">
-        <CardHeader className="pb-4">
+      {/* Filters */}
+      <Card>
+        <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <IconFilter className="h-5 w-5 text-blue-600" />
-              Filter Students
+            <CardTitle className="flex items-center gap-2">
+              <IconFilter className="h-4 w-4" />
+              Filters
             </CardTitle>
-            <div className="flex items-center gap-2 text-sm font-medium">
-              <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
-                {filteredStudents.length}
-              </span>
-              <span className="text-muted-foreground">of {students.length} students</span>
+            <div className="text-sm text-muted-foreground">
+              {filteredStudents.length} of {students.length} students
             </div>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Enhanced Search Bar */}
           <div className="relative">
             <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="🔍 Search by name, ID, or father's name..."
+              placeholder="Search by name, ID, or father's name..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-10 h-11 text-base border-2 focus:border-blue-500"
+              className="pl-10"
             />
             {searchTerm && (
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setSearchTerm('')}
-                className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 p-0 hover:bg-red-100"
+                className="absolute right-2 top-1/2 -translate-y-1/2 h-6 w-6 p-0"
               >
-                <IconX className="h-4 w-4" />
+                <IconX className="h-3 w-3" />
               </Button>
             )}
           </div>
           
-          {/* Filter Grid */}
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">📚 Class</label>
+              <label className="text-sm font-medium">Class</label>
               <Select value={classFilter} onValueChange={setClassFilter}>
-                <SelectTrigger className="h-10 border-2 hover:border-blue-300">
+                <SelectTrigger>
                   <SelectValue placeholder="All Classes" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">📚 All Classes</SelectItem>
+                  <SelectItem value="all">All Classes</SelectItem>
                   {uniqueClasses.map(cls => (
                     <SelectItem key={cls} value={cls}>{cls}</SelectItem>
                   ))}
@@ -256,94 +259,107 @@ export default function StudentsPage() {
             </div>
             
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">⏰ Batch</label>
-              <Select value={batchFilter} onValueChange={setBatchFilter}>
-                <SelectTrigger className="h-10 border-2 hover:border-blue-300">
-                  <SelectValue placeholder="All Batches" />
+              <label className="text-sm font-medium">Section</label>
+              <Select value={sectionFilter} onValueChange={setSectionFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All Sections" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">⏰ All Batches</SelectItem>
-                  {uniqueBatches.map(batch => (
-                    <SelectItem key={batch} value={batch}>
-                      {batch === 'Morning Batch' ? '🌅' : '🌆'} {batch}
-                    </SelectItem>
+                  <SelectItem value="all">All Sections</SelectItem>
+                  {uniqueSections.map(section => (
+                    <SelectItem key={section} value={section}>Section {section}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">📊 Status</label>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="h-10 border-2 hover:border-blue-300">
-                  <SelectValue placeholder="All Status" />
+              <label className="text-sm font-medium">Batch</label>
+              <Select value={batchFilter} onValueChange={setBatchFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All Batches" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">📊 All Status</SelectItem>
-                  <SelectItem value="ACTIVE">✅ Active</SelectItem>
-                  <SelectItem value="INACTIVE">⏸️ Inactive</SelectItem>
-                  <SelectItem value="DISABLED">❌ Disabled</SelectItem>
+                  <SelectItem value="all">All Batches</SelectItem>
+                  {uniqueBatches.map(batch => (
+                    <SelectItem key={batch} value={batch}>{batch}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
             
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">👥 Gender</label>
+              <label className="text-sm font-medium">Status</label>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="ACTIVE">Active</SelectItem>
+                  <SelectItem value="INACTIVE">Inactive</SelectItem>
+                  <SelectItem value="DISABLED">Disabled</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Gender</label>
               <Select value={genderFilter} onValueChange={setGenderFilter}>
-                <SelectTrigger className="h-10 border-2 hover:border-blue-300">
+                <SelectTrigger>
                   <SelectValue placeholder="All Genders" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">👥 All Genders</SelectItem>
-                  <SelectItem value="MALE">👨 Male</SelectItem>
-                  <SelectItem value="FEMALE">👩 Female</SelectItem>
+                  <SelectItem value="all">All Genders</SelectItem>
+                  <SelectItem value="MALE">Male</SelectItem>
+                  <SelectItem value="FEMALE">Female</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
           
-          {/* Active Filters & Clear */}
-          {(searchTerm || classFilter !== 'all' || statusFilter !== 'all' || batchFilter !== 'all' || genderFilter !== 'all') && (
-            <div className="flex items-center justify-between pt-3 border-t border-blue-200">
+          {(searchTerm || classFilter !== 'all' || statusFilter !== 'all' || batchFilter !== 'all' || genderFilter !== 'all' || sectionFilter !== 'all') && (
+            <div className="flex items-center justify-between pt-4 border-t">
               <div className="flex flex-wrap gap-2">
                 {searchTerm && (
-                  <Badge variant="secondary" className="gap-1 bg-blue-100 text-blue-700 hover:bg-blue-200">
-                    🔍 {searchTerm}
-                    <IconX className="h-3 w-3 cursor-pointer hover:text-red-600" onClick={() => setSearchTerm('')} />
+                  <Badge variant="secondary" className="gap-1">
+                    Search: {searchTerm}
+                    <IconX className="h-3 w-3 cursor-pointer" onClick={() => setSearchTerm('')} />
                   </Badge>
                 )}
                 {classFilter !== 'all' && (
-                  <Badge variant="secondary" className="gap-1 bg-green-100 text-green-700 hover:bg-green-200">
-                    📚 {classFilter}
-                    <IconX className="h-3 w-3 cursor-pointer hover:text-red-600" onClick={() => setClassFilter('all')} />
+                  <Badge variant="secondary" className="gap-1">
+                    Class: {classFilter}
+                    <IconX className="h-3 w-3 cursor-pointer" onClick={() => setClassFilter('all')} />
+                  </Badge>
+                )}
+                {sectionFilter !== 'all' && (
+                  <Badge variant="secondary" className="gap-1">
+                    Section: {sectionFilter}
+                    <IconX className="h-3 w-3 cursor-pointer" onClick={() => setSectionFilter('all')} />
                   </Badge>
                 )}
                 {batchFilter !== 'all' && (
-                  <Badge variant="secondary" className="gap-1 bg-orange-100 text-orange-700 hover:bg-orange-200">
-                    ⏰ {batchFilter}
-                    <IconX className="h-3 w-3 cursor-pointer hover:text-red-600" onClick={() => setBatchFilter('all')} />
+                  <Badge variant="secondary" className="gap-1">
+                    Batch: {batchFilter}
+                    <IconX className="h-3 w-3 cursor-pointer" onClick={() => setBatchFilter('all')} />
                   </Badge>
                 )}
                 {statusFilter !== 'all' && (
-                  <Badge variant="secondary" className="gap-1 bg-purple-100 text-purple-700 hover:bg-purple-200">
-                    📊 {statusFilter}
-                    <IconX className="h-3 w-3 cursor-pointer hover:text-red-600" onClick={() => setStatusFilter('all')} />
+                  <Badge variant="secondary" className="gap-1">
+                    Status: {statusFilter}
+                    <IconX className="h-3 w-3 cursor-pointer" onClick={() => setStatusFilter('all')} />
                   </Badge>
                 )}
                 {genderFilter !== 'all' && (
-                  <Badge variant="secondary" className="gap-1 bg-pink-100 text-pink-700 hover:bg-pink-200">
-                    👥 {genderFilter}
-                    <IconX className="h-3 w-3 cursor-pointer hover:text-red-600" onClick={() => setGenderFilter('all')} />
+                  <Badge variant="secondary" className="gap-1">
+                    Gender: {genderFilter}
+                    <IconX className="h-3 w-3 cursor-pointer" onClick={() => setGenderFilter('all')} />
                   </Badge>
                 )}
               </div>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={clearFilters} 
-                className="gap-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300"
-              >
-                <IconX className="h-4 w-4" />
+              <Button variant="outline" size="sm" onClick={clearFilters}>
+                <IconX className="h-4 w-4 mr-2" />
                 Clear All
               </Button>
             </div>
@@ -351,29 +367,21 @@ export default function StudentsPage() {
         </CardContent>
       </Card>
 
-      {/* Enhanced Students Table */}
-      <Card className="shadow-sm">
-        <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-100">
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-xl">Students Directory</CardTitle>
-              <CardDescription className="mt-1">
-                Comprehensive student management and records
-              </CardDescription>
-            </div>
-            <div className="text-right">
-              <div className="text-2xl font-bold text-blue-600">{filteredStudents.length}</div>
-              <div className="text-sm text-muted-foreground">Total Results</div>
-            </div>
-          </div>
+      {/* Students Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Students List</CardTitle>
+          <CardDescription>
+            View and manage all student records
+          </CardDescription>
         </CardHeader>
-        <CardContent className="p-0">
+        <CardContent>
           <DataTable
             data={filteredStudents}
             columns={studentsColumns(handleEdit) as any}
             enableSearch={false}
             enablePagination={true}
-            pageSize={15}
+            pageSize={10}
             showCreateButton={false}
           />
         </CardContent>

@@ -4,6 +4,7 @@ export * from './student'
 export * from './teacher'
 export * from './attendance'
 export * from './report'
+export * from './session'
 
 // Additional utility queries
 import { prisma } from '@/lib/prisma'

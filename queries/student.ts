@@ -29,11 +29,7 @@ export async function getStudents(sessionId: string, filters?: StudentFilters) {
   if (filters?.batchId) where.batchId = filters.batchId
   if (filters?.status) where.status = filters.status
   if (filters?.search) {
-    where.OR = [
-      { studentId: { contains: filters.search } },
-      { personal: { path: ['nameEn'], string_contains: filters.search } },
-      { personal: { path: ['nameBn'], string_contains: filters.search } }
-    ]
+    where.studentId = { contains: filters.search, mode: 'insensitive' }
   }
 
   return prisma.student.findMany({

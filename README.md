@@ -238,6 +238,11 @@ erDiagram
 - **Reports**: Student info, finance, attendance, export functionality
 - **Utilities**: Session management, academic structure, fee management
 
+### Server Actions (`/actions/`)
+- **Student Actions**: Create, update, delete students and notes
+- **Teacher Actions**: CRUD teachers, leave request management
+- **Attendance Actions**: Mark/delete student and staff attendance
+
 ### UI Components (`/components/`)
 - **Dashboard**: Summary cards, charts, notifications
 - **Tables**: Data tables with sorting, filtering, pagination
@@ -276,6 +281,11 @@ attendance-management/
 │   │   ├── attendance/    # Attendance tracking
 │   │   └── reports/       # Reports & analytics
 │   └── globals.css        # Global styles
+├── actions/              # Server Actions
+│   ├── student.ts        # Student CRUD actions
+│   ├── teacher.ts        # Teacher CRUD actions
+│   ├── attendance.ts     # Attendance actions
+│   └── index.ts          # Action exports
 ├── components/            # Reusable UI components
 │   ├── Dashboard/         # Dashboard-specific components
 │   ├── Table/            # Data table components
@@ -322,19 +332,26 @@ attendance-management/
 - Page-specific components in respective page directories
 - Use shadcn/ui for consistent design system
 
-## Query Usage Examples
+## Usage Examples
 
+### Server Actions (for mutations)
 ```typescript
-// Student operations
-import { createStudent, getStudents, updateStudent } from '@/queries'
+import { createStudentAction, updateStudentAction } from '@/actions'
 
-// Create new student
-const student = await createStudent({
-  studentId: 'STU001',
-  sessionId: 'session-id',
-  personal: { nameEn: 'John Doe', ... },
-  // ... other fields
-})
+// In form component
+const handleSubmit = async (data: StudentFormData) => {
+  const result = await createStudentAction(data)
+  if (result.success) {
+    // Handle success
+  } else {
+    // Handle error: result.error
+  }
+}
+```
+
+### Query Functions (for data fetching)
+```typescript
+import { getStudents, getTeachers } from '@/queries'
 
 // Get students with filters
 const students = await getStudents('session-id', {
@@ -348,12 +365,21 @@ const students = await getStudents('session-id', {
 
 # 8. 📝 Recent Updates
 
-**Latest Update**: Database queries implementation with proper TypeScript types
+**Latest Update**: Database seeded with Bogura coaching center data
 - ✅ Updated all query functions to use defined types
 - ✅ Improved type safety across the application
 - ✅ Added comprehensive CRUD operations for all entities
 - ✅ Implemented filtering and search functionality
 - ✅ Added proper error handling and validation
+- ✅ **Database seeded with realistic Bogura district data:**
+  - 1 Active session (2025)
+  - 7 Classes (Class 6-10, HSC 1st & 2nd Year)
+  - 14 Batches (Morning & Evening for each class)
+  - 14 Sections (A & B for each class)
+  - 4 Teachers with Bogura addresses
+  - 175 Students from various Bogura areas
+  - 3 Fee masters (Admission, Monthly, Exam)
+  - 50 Fee collections with different payment methods
 
 **Next Steps**: 
 - Implement server actions for form handling

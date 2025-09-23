@@ -5,6 +5,22 @@ const prisma = new PrismaClient()
 async function main() {
   console.log('🌱 Seeding Bogura Coaching Center data...')
 
+  // Clear existing data
+  await prisma.collection.deleteMany()
+  await prisma.attendanceStudent.deleteMany()
+  await prisma.attendanceStaff.deleteMany()
+  await prisma.studentNote.deleteMany()
+  await prisma.teacherLeave.deleteMany()
+  await prisma.student.deleteMany()
+  await prisma.teacher.deleteMany()
+  await prisma.feeMaster.deleteMany()
+  await prisma.section.deleteMany()
+  await prisma.batch.deleteMany()
+  await prisma.class.deleteMany()
+  await prisma.session.deleteMany()
+  
+  console.log('🗑️ Cleared existing data')
+
   // Create Session
   const session = await prisma.session.create({
     data: {
@@ -206,6 +222,46 @@ async function main() {
     'Khanjanpur', 'Joypurhat Road', 'Mahasthangarh', 'Shibganj', 'Sonatola'
   ]
 
+  const maleNames = [
+    { bn: 'মোহাম্মদ রাহুল ইসলাম', en: 'Mohammad Rahul Islam' },
+    { bn: 'আব্দুল্লাহ আল মামুন', en: 'Abdullah Al Mamun' },
+    { bn: 'মোহাম্মদ তানভীর হাসান', en: 'Mohammad Tanvir Hasan' },
+    { bn: 'রাকিবুল ইসলাম', en: 'Rakibul Islam' },
+    { bn: 'মোহাম্মদ সাকিব হাসান', en: 'Mohammad Sakib Hasan' },
+    { bn: 'আরিফুল ইসলাম', en: 'Ariful Islam' },
+    { bn: 'মোহাম্মদ নাহিদ হাসান', en: 'Mohammad Nahid Hasan' },
+    { bn: 'সাদমান সাকিব', en: 'Sadman Sakib' },
+    { bn: 'মোহাম্মদ রিফাত', en: 'Mohammad Rifat' },
+    { bn: 'তামিম ইকবাল', en: 'Tamim Iqbal' }
+  ]
+
+  const femaleNames = [
+    { bn: 'ফাতেমা আক্তার', en: 'Fatema Akter' },
+    { bn: 'আয়েশা সিদ্দিকা', en: 'Ayesha Siddika' },
+    { bn: 'রুমানা খাতুন', en: 'Rumana Khatun' },
+    { bn: 'সুমাইয়া আক্তার', en: 'Sumaiya Akter' },
+    { bn: 'তাসনিম জাহান', en: 'Tasnim Jahan' },
+    { bn: 'নাফিসা আহমেদ', en: 'Nafisa Ahmed' },
+    { bn: 'সাবিনা ইয়াসমিন', en: 'Sabina Yasmin' },
+    { bn: 'রাবেয়া খাতুন', en: 'Rabeya Khatun' },
+    { bn: 'মারিয়া আক্তার', en: 'Maria Akter' },
+    { bn: 'জান্নাতুল ফেরদৌস', en: 'Jannatul Ferdous' }
+  ]
+
+  const fatherNames = [
+    'মোহাম্মদ আব্দুল করিম', 'আব্দুর রহমান', 'মোহাম্মদ আলী হোসেন', 'নুরুল ইসলাম',
+    'আব্দুল মজিদ', 'মোহাম্মদ শফিকুল ইসলাম', 'আব্দুস সালাম', 'মোহাম্মদ আনোয়ার হোসেন',
+    'আব্দুল হামিদ', 'মোহাম্মদ নজরুল ইসলাম'
+  ]
+
+  const motherNames = [
+    'রোকেয়া বেগম', 'সালমা খাতুন', 'রাহেলা বেগম', 'নাসিরা খাতুন',
+    'ফরিদা বেগম', 'আমেনা খাতুন', 'জোহরা বেগম', 'রাশিদা খাতুন',
+    'সাকিনা বেগম', 'হাসিনা খাতুন'
+  ]
+
+  const occupations = ['ব্যবসা', 'চাকরি', 'কৃষিকাজ', 'শিক্ষকতা', 'দোকানদার', 'ড্রাইভার']
+
   const students = []
   let studentCounter = 1
 
@@ -217,6 +273,8 @@ async function main() {
       const batchIndex = i % classBatches.length
       const sectionIndex = i % classSections.length
       const areaIndex = i % boguraAreas.length
+      const isGenderMale = Math.random() > 0.5
+      const nameIndex = i % 10
       
       const student = await prisma.student.create({
         data: {
@@ -227,25 +285,25 @@ async function main() {
           sectionId: classSections[sectionIndex].id,
           roll: String(i + 1),
           personal: {
-            nameBn: `ছাত্র ${studentCounter}`,
-            nameEn: `Student ${studentCounter}`,
-            dob: `200${Math.floor(Math.random() * 10)}-${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}`,
-            gender: Math.random() > 0.5 ? 'MALE' : 'FEMALE',
+            nameBn: isGenderMale ? maleNames[nameIndex].bn : femaleNames[nameIndex].bn,
+            nameEn: isGenderMale ? maleNames[nameIndex].en : femaleNames[nameIndex].en,
+            dob: `${2005 + Math.floor(Math.random() * 8)}-${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}`,
+            gender: isGenderMale ? 'MALE' : 'FEMALE',
             bloodGroup: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'][Math.floor(Math.random() * 8)]
           },
           guardian: {
-            fatherName: `Father of Student ${studentCounter}`,
-            motherName: `Mother of Student ${studentCounter}`,
-            fatherOccupation: ['Business', 'Service', 'Agriculture', 'Teaching'][Math.floor(Math.random() * 4)],
-            motherOccupation: 'Housewife',
+            fatherName: fatherNames[i % fatherNames.length],
+            motherName: motherNames[i % motherNames.length],
+            fatherOccupation: occupations[Math.floor(Math.random() * occupations.length)],
+            motherOccupation: 'গৃহিণী',
             contact: {
               smsNo: `0171${String(Math.floor(Math.random() * 10000000)).padStart(7, '0')}`,
               altNo: `0181${String(Math.floor(Math.random() * 10000000)).padStart(7, '0')}`
             }
           },
           address: {
-            present: `${boguraAreas[areaIndex]}, Bogura`,
-            permanent: `${boguraAreas[areaIndex]}, Bogura`
+            present: `${boguraAreas[areaIndex]}, বগুড়া`,
+            permanent: `${boguraAreas[areaIndex]}, বগুড়া`
           },
           status: 'ACTIVE',
           continuityTick: Math.random() > 0.2

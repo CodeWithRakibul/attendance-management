@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
 import Image from 'next/image';
+import logo from '@/public/easy-logo.jpg';
 
 const data = {
     navMain: [
@@ -90,14 +91,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                 target='_blank'
                                 rel='noopener noreferrer'
                             >
-                                <Image
-                                    src='/logo.png'
-                                    alt='Stack Provider'
-                                    width={32}
-                                    height={32}
-                                />
+                                <Image src={logo} alt='Stack Provider' width={32} height={32} />
                                 <span className='text-lg font-semibold'>
-                                    Stack <span className='text-green-600'>Provider</span>
+                                    Easy <span className='text-[#6e56cf]'>Coaching</span>
                                 </span>
                             </Link>
                         </SidebarMenuButton>

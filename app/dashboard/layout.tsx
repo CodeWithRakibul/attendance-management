@@ -16,7 +16,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <AppSidebar variant='inset' />
             <SidebarInset>
                 <div className='h-[98vh] sticky top-0 overflow-y-auto'>
-                    <div className='sticky top-0 z-20'>
+                    <div className='sticky top-0 z-20 bg-background'>
                         <SiteHeader />
                     </div>
                     <div className='flex flex-1 flex-col'>

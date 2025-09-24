@@ -169,3 +169,36 @@ export async function getTeacherDashboard(teacherId: string) {
 
   return { attendanceSummary, recentLeaves, totalStudents }
 }
+
+// TEACHER STATS
+export async function getTeacherStats() {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  const [totalTeachers, activeTeachers, onLeaveToday, teachersWithExperience] = await Promise.all([
+    prisma.teacher.count(),
+    prisma.teacher.count({ where: { status: 'ACTIVE' } }),
+    prisma.teacherLeave.count({
+      where: {
+        status: 'APPROVED',
+        startDate: { lte: today },
+        endDate: { gte: today }
+      }
+    }),
+    prisma.teacher.findMany({
+      where: { experience: { not: null } },
+      select: { experience: true }
+    })
+  ])
+
+  const avgExperience = teachersWithExperience.length > 0 
+    ? teachersWithExperience.reduce((sum, t) => sum + (parseInt(t.experience || '0') || 0), 0) / teachersWithExperience.length
+    : 0
+
+  return {
+    totalTeachers,
+    activeTeachers,
+    onLeaveToday,
+    avgExperience: Math.round(avgExperience * 10) / 10
+  }
+}

@@ -3,10 +3,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { IconUsers } from '@tabler/icons-react';
 import { TeachersTable } from './teachers-table';
 import { Teacher } from './columns';
-import { getTeachers } from '@/queries';
+import { getTeachers, getTeacherStats } from '@/queries';
 
 export default async function TeachersPage() {
-  const teachersData = await getTeachers();
+  const [teachersData, stats] = await Promise.all([
+    getTeachers(),
+    getTeacherStats()
+  ]);
 
   // Transform Prisma data to match Teacher type
   const teachers: Teacher[] = teachersData.map(teacher => ({
@@ -43,8 +46,8 @@ export default async function TeachersPage() {
             <IconUsers className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">24</div>
-            <p className="text-xs text-muted-foreground">+2 from last month</p>
+            <div className="text-2xl font-bold">{stats.totalTeachers}</div>
+            <p className="text-xs text-muted-foreground">Total registered</p>
           </CardContent>
         </Card>
 
@@ -54,8 +57,8 @@ export default async function TeachersPage() {
             <IconUsers className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">22</div>
-            <p className="text-xs text-muted-foreground">91.7% active rate</p>
+            <div className="text-2xl font-bold">{stats.activeTeachers}</div>
+            <p className="text-xs text-muted-foreground">{((stats.activeTeachers / stats.totalTeachers) * 100).toFixed(1)}% active rate</p>
           </CardContent>
         </Card>
 
@@ -65,7 +68,7 @@ export default async function TeachersPage() {
             <IconUsers className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">2</div>
+            <div className="text-2xl font-bold">{stats.onLeaveToday}</div>
             <p className="text-xs text-muted-foreground">Today</p>
           </CardContent>
         </Card>
@@ -76,7 +79,7 @@ export default async function TeachersPage() {
             <IconUsers className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">5.2</div>
+            <div className="text-2xl font-bold">{stats.avgExperience}</div>
             <p className="text-xs text-muted-foreground">Years</p>
           </CardContent>
         </Card>

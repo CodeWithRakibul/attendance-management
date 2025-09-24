@@ -1,32 +1,44 @@
 import { Suspense } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { IconPlus, IconUsers } from '@tabler/icons-react';
-import { getTeachers } from './actions';
-import { TeacherDialog } from './teacher-dialog';
-import { TeacherAddDialog } from './teacher-add-dialog';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { IconUsers } from '@tabler/icons-react';
 import { TeachersTable } from './teachers-table';
+import { Teacher } from './columns';
+import { getTeachers } from '@/queries';
 
 export default async function TeachersPage() {
-  const teachers = await getTeachers();
+  const teachersData = await getTeachers();
+
+  // Transform Prisma data to match Teacher type
+  const teachers: Teacher[] = teachersData.map(teacher => ({
+    id: teacher.id,
+    staffId: teacher.staffId,
+    personal: {
+      nameEn: (teacher.personal as any)?.nameEn || '',
+      nameBn: (teacher.personal as any)?.nameBn,
+      dob: (teacher.personal as any)?.dob || '',
+      gender: (teacher.personal as any)?.gender || '',
+      photoUrl: (teacher.personal as any)?.photoUrl
+    },
+    contact: {
+      mobile: (teacher.contact as any)?.mobile || '',
+      email: (teacher.contact as any)?.email
+    },
+    designation: teacher.designation,
+    subjects: teacher.subjects as string[],
+    qualification: teacher.qualification || '',
+    salaryInfo: {
+      basicSalary: (teacher.salaryInfo as any)?.basic || 0,
+      allowances: (teacher.salaryInfo as any)?.allowances
+    },
+    status: teacher.status as 'ACTIVE' | 'INACTIVE' | 'DISABLED',
+    createdAt: teacher.createdAt.toISOString()
+  }));
 
   return (
-    <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-      <div className="flex items-center justify-between space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">Teachers</h2>
-        <div className="flex items-center space-x-2">
-          <TeacherAddDialog>
-          <Button>
-            <IconPlus className="mr-2 h-4 w-4" />
-            Add Teacher
-          </Button>
-        </TeacherAddDialog>
-        </div>
-      </div>
-
+    <div className="flex-1 space-y-4">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <Card className='!gap-2'>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0">
             <CardTitle className="text-sm font-medium">Total Teachers</CardTitle>
             <IconUsers className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -35,9 +47,9 @@ export default async function TeachersPage() {
             <p className="text-xs text-muted-foreground">+2 from last month</p>
           </CardContent>
         </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+
+        <Card className='!gap-2'>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0">
             <CardTitle className="text-sm font-medium">Active Teachers</CardTitle>
             <IconUsers className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -47,8 +59,8 @@ export default async function TeachersPage() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <Card className='!gap-2'>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0">
             <CardTitle className="text-sm font-medium">On Leave</CardTitle>
             <IconUsers className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -58,8 +70,8 @@ export default async function TeachersPage() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <Card className='!gap-2'>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0">
             <CardTitle className="text-sm font-medium">Avg. Experience</CardTitle>
             <IconUsers className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -71,12 +83,6 @@ export default async function TeachersPage() {
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Teachers List</CardTitle>
-          <CardDescription>
-            Manage your teaching staff and their information.
-          </CardDescription>
-        </CardHeader>
         <CardContent>
           <Suspense fallback={<div>Loading teachers...</div>}>
             <TeachersTable teachers={teachers} />

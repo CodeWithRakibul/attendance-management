@@ -9,7 +9,7 @@ import { TeacherStatus, LeaveType, LeaveStatus, Prisma } from '@prisma/client'
 
 // CREATE
 export async function createTeacher(data: TeacherFormData) {
-  return prisma.teacher.create({ 
+  return prisma.teacher.create({
     data: {
       ...data,
       personal: data.personal as unknown as Prisma.JsonObject,
@@ -21,39 +21,61 @@ export async function createTeacher(data: TeacherFormData) {
   })
 }
 
-// READ
-export async function getTeachers(sessionId: string, filters?: TeacherFilters) {
-  const where: any = { sessionId }
-  
-  if (filters?.status) where.status = filters.status
-  if (filters?.designation) where.designation = filters.designation
-  if (filters?.search) {
-    where.OR = [
-      { staffId: { contains: filters.search } },
-      { personal: { path: ['nameEn'], string_contains: filters.search } },
-      { personal: { path: ['nameBn'], string_contains: filters.search } }
-    ]
-  }
+export async function getTeachers() {
+  try {
+    const teachers = await prisma.teacher.findMany({
+      include: {
+        leaves: {
+          where: {
+            status: 'APPROVED',
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+          take: 5,
+        },
+        attendanceStaff: {
+          orderBy: {
+            date: 'desc',
+          },
+          take: 10,
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
 
-  return prisma.teacher.findMany({
-    where,
-    include: {
-      leaves: { orderBy: { createdAt: 'desc' }, take: 5 },
-      attendanceStaff: { orderBy: { date: 'desc' }, take: 30 }
-    },
-    orderBy: { createdAt: 'desc' }
-  })
+    return teachers;
+  } catch (error) {
+    console.error('Failed to fetch teachers:', error);
+    throw new Error('Failed to fetch teachers');
+  }
 }
 
-export async function getTeacherById(id: string) {
-  return prisma.teacher.findUnique({
-    where: { id },
-    include: {
-      leaves: { orderBy: { createdAt: 'desc' } },
-      attendanceStaff: { orderBy: { date: 'desc' } },
-      notes: { include: { student: true } }
-    }
-  })
+export async function getTeacher(id: string) {
+  try {
+    const teacher = await prisma.teacher.findUnique({
+      where: { id },
+      include: {
+        leaves: {
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
+        attendanceStaff: {
+          orderBy: {
+            date: 'desc',
+          },
+        },
+      },
+    });
+
+    return teacher;
+  } catch (error) {
+    console.error('Failed to fetch teacher:', error);
+    throw new Error('Failed to fetch teacher');
+  }
 }
 
 // UPDATE
@@ -64,7 +86,7 @@ export async function updateTeacher(id: string, data: Partial<TeacherFormData>) 
   if (data.address) updateData.address = data.address as unknown as Prisma.JsonObject
   if (data.salaryInfo) updateData.salaryInfo = data.salaryInfo as unknown as Prisma.JsonObject
   if (data.subjects) updateData.subjects = data.subjects as unknown as Prisma.JsonArray
-  
+
   return prisma.teacher.update({
     where: { id },
     data: updateData
@@ -108,7 +130,7 @@ export async function getLeaveRequests(filters?: {
   endDate?: Date
 }) {
   const where: any = {}
-  
+
   if (filters?.teacherId) where.teacherId = filters.teacherId
   if (filters?.status) where.status = filters.status
   if (filters?.startDate && filters?.endDate) {
@@ -131,7 +153,7 @@ export async function deleteLeaveRequest(id: string) {
 export async function getTeacherDashboard(teacherId: string) {
   const [attendanceSummary, recentLeaves, totalStudents] = await Promise.all([
     prisma.attendanceStaff.count({
-      where: { 
+      where: {
         staffId: teacherId,
         date: { gte: new Date(new Date().setDate(new Date().getDate() - 30)) },
         status: 'PRESENT'

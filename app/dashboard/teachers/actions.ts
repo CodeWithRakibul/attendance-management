@@ -37,63 +37,6 @@ export type TeacherCreateFormData = {
   status?: TeacherStatus;
 };
 
-export async function getTeachers() {
-  try {
-    const teachers = await prisma.teacher.findMany({
-      include: {
-        leaves: {
-          where: {
-            status: 'APPROVED',
-          },
-          orderBy: {
-            createdAt: 'desc',
-          },
-          take: 5,
-        },
-        attendanceStaff: {
-          orderBy: {
-            date: 'desc',
-          },
-          take: 10,
-        },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
-
-    return teachers;
-  } catch (error) {
-    console.error('Failed to fetch teachers:', error);
-    throw new Error('Failed to fetch teachers');
-  }
-}
-
-export async function getTeacher(id: string) {
-  try {
-    const teacher = await prisma.teacher.findUnique({
-      where: { id },
-      include: {
-        leaves: {
-          orderBy: {
-            createdAt: 'desc',
-          },
-        },
-        attendanceStaff: {
-          orderBy: {
-            date: 'desc',
-          },
-        },
-      },
-    });
-
-    return teacher;
-  } catch (error) {
-    console.error('Failed to fetch teacher:', error);
-    throw new Error('Failed to fetch teacher');
-  }
-}
-
 export async function createTeacher(data: TeacherCreateFormData) {
   try {
     // Get the active session

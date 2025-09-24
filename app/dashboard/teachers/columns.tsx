@@ -1,10 +1,16 @@
 'use client';
 
+import { useState } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { IconEye } from '@tabler/icons-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { IconEye, IconEdit, IconTrash, IconDots } from '@tabler/icons-react';
+import Link from 'next/link';
+import { deleteTeacherAction } from '@/actions';
+import { toast } from 'sonner';
+import { AlertModal } from '@/components/alert-modal';
 
 export type Teacher = {
     id: string;
@@ -77,7 +83,8 @@ export const teachersColumns = (): ColumnDef<Teacher>[] => [
     {
         accessorKey: 'designation',
         header: 'Designation',
-        cell: ({ row }) => <div className='font-medium'>{row.getValue('designation')}</div>
+        cell: ({ row }) => <div className='font-medium'>{row.getValue('designation')}</div>,
+        filterFn: 'multiSelect' as any
     },
     {
         accessorKey: 'subjects',
@@ -103,7 +110,8 @@ export const teachersColumns = (): ColumnDef<Teacher>[] => [
     {
         accessorKey: 'qualification',
         header: 'Qualification',
-        cell: ({ row }) => <div className='text-sm'>{row.getValue('qualification')}</div>
+        cell: ({ row }) => <div className='text-sm'>{row.getValue('qualification')}</div>,
+        filterFn: 'multiSelect' as any
     },
     {
         accessorKey: 'contact.mobile',
@@ -151,14 +159,15 @@ export const teachersColumns = (): ColumnDef<Teacher>[] => [
                         status === 'ACTIVE'
                             ? 'default'
                             : status === 'INACTIVE'
-                            ? 'secondary'
-                            : 'destructive'
+                                ? 'secondary'
+                                : 'destructive'
                     }
                 >
                     {status}
                 </Badge>
             );
-        }
+        },
+        filterFn: 'multiSelect' as any
     },
     {
         accessorKey: 'createdAt',
@@ -173,19 +182,61 @@ export const teachersColumns = (): ColumnDef<Teacher>[] => [
         header: 'Actions',
         cell: ({ row }) => {
             const teacher = row.original;
+            const [open, setOpen] = useState(false);
+            const [loading, setLoading] = useState(false);
+
+            const onDelete = async () => {
+                setLoading(true);
+                const result = await deleteTeacherAction(teacher.id);
+                if (result.success) {
+                    toast.success('Teacher deleted successfully');
+                    window.location.reload();
+                } else {
+                    toast.error(result.error || 'Failed to delete teacher');
+                }
+                setLoading(false);
+                setOpen(false);
+            };
 
             return (
-                <Button
-                    variant='ghost'
-                    className='h-8 w-8 p-0'
-                    onClick={() => {
-                        // This will need to be handled by the parent component
-                        console.log('View teacher:', teacher);
-                    }}
-                >
-                    <span className='sr-only'>View teacher profile</span>
-                    <IconEye className='h-4 w-4' />
-                </Button>
+                <>
+                    <AlertModal
+                        isOpen={open}
+                        onClose={() => setOpen(false)}
+                        onConfirm={onDelete}
+                        loading={loading}
+                        title="Delete Teacher"
+                        description={`Are you sure you want to delete ${teacher.personal.nameEn}? This action cannot be undone.`}
+                    />
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant='ghost' className='h-8 w-8 p-0'>
+                                <IconDots className='h-4 w-4' />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align='end'>
+                            <DropdownMenuItem asChild>
+                                <Link href={`/dashboard/teachers/${teacher.id}`}>
+                                    <IconEye className='size-4' />
+                                    View Details
+                                </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                                <Link href={`/dashboard/teachers/${teacher.id}/edit`}>
+                                    <IconEdit className='size-4' />
+                                    Edit
+                                </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                                className='text-destructive'
+                                onClick={() => setOpen(true)}
+                            >
+                                <IconTrash className='size-4 text-destructive' />
+                                Delete
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </>
             );
         }
     }

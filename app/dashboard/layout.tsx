@@ -15,7 +15,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         >
             <AppSidebar variant='inset' />
             <SidebarInset>
-                <div className='h-[98vh] sticky top-0 overflow-y-auto'>
+                <div
+                    className='sticky top-0 overflow-y-auto rounded-4xl'
+                    style={{ height: 'calc(100vh - 1rem)' }}
+                >
                     <div className='sticky top-0 z-20 bg-background'>
                         <SiteHeader />
                     </div>

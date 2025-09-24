@@ -177,7 +177,7 @@ export async function StudentsPageContent({ searchParams }: StudentsPageContentP
             />
 
             {/* Empty State */}
-            {filteredStudents.length === 0 && (
+            {/* {filteredStudents.length === 0 && (
                 <Card className='border-2 border-dashed border-gray-200'>
                     <CardContent className='flex flex-col items-center justify-center py-12'>
                         <div className='p-4 bg-gray-100 rounded-full mb-4'>
@@ -193,7 +193,7 @@ export async function StudentsPageContent({ searchParams }: StudentsPageContentP
                         </p>
                     </CardContent>
                 </Card>
-            )}
+            )} */}
         </div>
     );
 }

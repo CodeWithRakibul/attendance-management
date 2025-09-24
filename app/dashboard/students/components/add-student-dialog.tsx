@@ -74,7 +74,7 @@ export function AddStudentDialog({
         emergencyContact: '',
 
         // Academic Information
-        sessionId: '',
+        sessionId: sessions.find(s => s.year === new Date().getFullYear().toString())?.id || sessions[0]?.id || '',
         classId: '',
         batchId: '',
         sectionId: '',
@@ -146,7 +146,7 @@ export function AddStudentDialog({
                         email: '',
                         address: '',
                         emergencyContact: '',
-                        sessionId: '',
+                        sessionId: sessions.find(s => s.year === new Date().getFullYear().toString())?.id || sessions[0]?.id || '',
                         classId: '',
                         batchId: '',
                         sectionId: '',
@@ -203,6 +203,7 @@ export function AddStudentDialog({
                                     onChange={(e) => handleInputChange('nameEn', e.target.value)}
                                     placeholder='Enter student name'
                                     required
+                                    autoFocus
                                 />
                             </div>
                             <div className='space-y-2'>
@@ -332,6 +333,7 @@ export function AddStudentDialog({
                                     value={formData.phone}
                                     onChange={(e) => handleInputChange('phone', e.target.value)}
                                     placeholder='01XXXXXXXXX'
+                                    maxLength={11}
                                 />
                             </div>
                             <div className='space-y-2'>
@@ -462,6 +464,7 @@ export function AddStudentDialog({
                                         handleInputChange('rollNumber', e.target.value)
                                     }
                                     placeholder='Enter roll number'
+                                    type='number'
                                 />
                             </div>
                             <div className='space-y-2'>

@@ -1,7 +1,6 @@
 import { Suspense } from 'react';
 import { StudentsDataTable } from './students-data-table';
 import { StudentsStats } from './students-stats';
-import { StudentsHeader } from './students-header';
 import {
     getStudents,
     getSessions,
@@ -160,9 +159,6 @@ export async function StudentsPageContent({ searchParams }: StudentsPageContentP
 
     return (
         <div className='space-y-6'>
-            {/* Header */}
-            <StudentsHeader />
-
             {/* Statistics */}
             <StudentsStats
                 totalStudents={totalStudents}

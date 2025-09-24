@@ -1,23 +1,23 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { 
-  createStudent, 
-  updateStudent, 
-  deleteStudent, 
-  addStudentNote, 
+import {
+  createStudent,
+  updateStudent,
+  deleteStudent,
+  addStudentNote,
   deleteStudentNote,
   getStudents as getStudentsQuery,
   getStudentById
 } from '@/queries/student'
-import { 
+import {
   getSessions,
-  getCurrentSession 
+  getCurrentSession
 } from '@/queries/session'
-import { 
+import {
   getClasses as getClassesQuery,
   getBatches as getBatchesQuery,
-  getSections as getSectionsQuery 
+  getSections as getSectionsQuery
 } from '@/queries/index'
 import type { StudentFormData, StudentFilters } from '@/types'
 

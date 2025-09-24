@@ -9,7 +9,7 @@ datasource db {
 
 // Session Management
 model Session {
-  id        String   @id @default(cuid()) @map("_id")
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   
   year      String   @unique
   status    SessionStatus @default(ACTIVE)
@@ -28,9 +28,9 @@ model Session {
 
 // Academic Structure
 model Class {
-  id        String   @id @default(cuid()) @map("_id")
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String
-  sessionId String
+  sessionId String   @db.ObjectId
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -41,10 +41,10 @@ model Class {
 }
 
 model Batch {
-  id        String   @id @default(cuid()) @map("_id")
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String
-  classId   String
-  sessionId String
+  classId   String   @db.ObjectId
+  sessionId String   @db.ObjectId
   timeSlot  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -56,10 +56,10 @@ model Batch {
 }
 
 model Section {
-  id        String   @id @default(cuid()) @map("_id")
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String
-  classId   String
-  sessionId String
+  classId   String   @db.ObjectId
+  sessionId String   @db.ObjectId
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -70,12 +70,12 @@ model Section {
 
 // Student Management
 model Student {
-  id            String        @id @default(cuid()) @map("_id")
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
   studentId     String        @unique
-  sessionId     String
-  classId       String
-  batchId       String
-  sectionId     String
+  sessionId     String        @db.ObjectId
+  classId       String        @db.ObjectId
+  batchId       String        @db.ObjectId
+  sectionId     String        @db.ObjectId
   roll          String
   status        StudentStatus @default(ACTIVE)
   disableReason String?
@@ -103,22 +103,22 @@ model Student {
 }
 
 model StudentNote {
-  id        String   @id @default(cuid()) @map("_id")
-  studentId String
-  staffId   String
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  studentId String   @db.ObjectId
+  staffId   String   @db.ObjectId
   note      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  student   Student  @relation(fields: [studentId], references: [id])
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   staff     Teacher  @relation(fields: [staffId], references: [id])
 }
 
 // Teacher/Staff Management
 model Teacher {
-  id            String        @id @default(cuid()) @map("_id")
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
   staffId       String        @unique
-  sessionId     String
+  sessionId     String        @db.ObjectId
   designation   String
   subjects      Json          // Array of subjects
   qualification String?
@@ -151,8 +151,8 @@ model Teacher {
 }
 
 model TeacherLeave {
-  id          String      @id @default(cuid()) @map("_id")
-  teacherId   String
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  teacherId   String      @db.ObjectId
   leaveType   LeaveType
   startDate   DateTime
   endDate     DateTime
@@ -169,17 +169,17 @@ model TeacherLeave {
 
 // Attendance Management
 model AttendanceStudent {
-  id        String           @id @default(cuid()) @map("_id")
-  studentId String
-  sessionId String
-  batchId   String
+  id        String           @id @default(auto()) @map("_id") @db.ObjectId
+  studentId String           @db.ObjectId
+  sessionId String           @db.ObjectId
+  batchId   String           @db.ObjectId
   date      DateTime
   status    AttendanceStatus
   markedBy  String
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
 
-  student   Student          @relation(fields: [studentId], references: [id])
+  student   Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
   session   Session          @relation(fields: [sessionId], references: [id])
   batch     Batch            @relation(fields: [batchId], references: [id])
 
@@ -187,8 +187,8 @@ model AttendanceStudent {
 }
 
 model AttendanceStaff {
-  id        String           @id @default(cuid()) @map("_id")
-  staffId   String
+  id        String           @id @default(auto()) @map("_id") @db.ObjectId
+  staffId   String           @db.ObjectId
   date      DateTime
   status    AttendanceStatus
   checkIn   DateTime?
@@ -203,8 +203,8 @@ model AttendanceStaff {
 
 // Fee Management
 model FeeMaster {
-  id        String   @id @default(cuid()) @map("_id")
-  sessionId String
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionId String   @db.ObjectId
   name      String
   amount    Float
   type      FeeType
@@ -218,20 +218,20 @@ model FeeMaster {
 }
 
 model Collection {
-  id          String           @id @default(cuid()) @map("_id")
-  studentId   String
-  sessionId   String
-  feeMasterId String
+  id          String           @id @default(auto()) @map("_id") @db.ObjectId
+  studentId   String           @db.ObjectId
+  sessionId   String           @db.ObjectId
+  feeMasterId String           @db.ObjectId
   amount      Float
   method      PaymentMethod    @default(CASH)
   status      CollectionStatus @default(PENDING)
-  collectedBy String
+  collectedBy String           @db.ObjectId
   receiptNo   String?
   collectedAt DateTime?
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
 
-  student     Student          @relation(fields: [studentId], references: [id])
+  student     Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
   session     Session          @relation(fields: [sessionId], references: [id])
   feeMaster   FeeMaster        @relation(fields: [feeMasterId], references: [id])
   collector   Teacher          @relation(fields: [collectedBy], references: [id])

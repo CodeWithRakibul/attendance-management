@@ -1,17 +1,13 @@
 import { prisma } from '@/lib/prisma'
-import type { 
-  StudentFormData, 
-  StudentWithRelations, 
+import type {
+  StudentFormData,
   StudentFilters,
-  PersonalInfo,
-  GuardianInfo,
-  AddressInfo
 } from '@/types'
-import { StudentStatus, Prisma } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 
 // CREATE
 export async function createStudent(data: StudentFormData) {
-  return prisma.student.create({ 
+  return prisma.student.create({
     data: {
       ...data,
       personal: data.personal as unknown as Prisma.JsonObject,
@@ -24,7 +20,7 @@ export async function createStudent(data: StudentFormData) {
 // READ
 export async function getStudents(sessionId: string, filters?: StudentFilters) {
   const where: any = { sessionId }
-  
+
   if (filters?.classId) where.classId = filters.classId
   if (filters?.batchId) where.batchId = filters.batchId
   if (filters?.sectionId) where.sectionId = filters.sectionId
@@ -69,7 +65,7 @@ export async function updateStudent(id: string, data: Partial<StudentFormData>) 
   if (data.personal) updateData.personal = data.personal as unknown as Prisma.JsonObject
   if (data.guardian) updateData.guardian = data.guardian as unknown as Prisma.JsonObject
   if (data.address) updateData.address = data.address as unknown as Prisma.JsonObject
-  
+
   return prisma.student.update({
     where: { id },
     data: updateData

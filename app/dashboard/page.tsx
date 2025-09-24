@@ -3,11 +3,11 @@ import { DashboardSummaryCards } from '@/components/Dashboard/dashboard-summary-
 import { DashboardCharts } from '@/components/Dashboard/dashboard-charts';
 import { DashboardNotifications } from '@/components/Dashboard/dashboard-notifications';
 import { RecentActivities } from '@/components/Dashboard/recent-activities';
-import { 
-  getAdmissionTrendsData,
-  getCollectionVsExpenseData,
-  getTodayAttendanceData,
-  getClassWiseAttendanceData
+import {
+    getAdmissionTrendsData,
+    getCollectionVsExpenseData,
+    getTodayAttendanceData,
+    getClassWiseAttendanceData
 } from '@/queries/charts';
 
 export default async function Page() {
@@ -24,7 +24,7 @@ export default async function Page() {
             <DashboardSummaryCards />
 
             {/* Charts Section */}
-            <DashboardCharts 
+            <DashboardCharts
                 admissionData={admissionData}
                 financeData={financeData}
                 attendanceData={attendanceData}

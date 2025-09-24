@@ -99,8 +99,8 @@ export function DashboardSummaryCards() {
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {[1, 2, 3, 4].map((i) => (
-          <Card key={i} className="animate-pulse">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <Card key={i} className="animate-pulse !gap-3">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0">
               <CardTitle className="text-sm font-medium">
                 <div className="h-4 bg-muted rounded w-24"></div>
               </CardTitle>
@@ -121,8 +121,8 @@ export function DashboardSummaryCards() {
       {cards.map((card, index) => {
         const Icon = card.icon;
         return (
-          <Card key={index} className="relative overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <Card key={index} className="relative overflow-hidden !gap-3">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 {card.title}
               </CardTitle>

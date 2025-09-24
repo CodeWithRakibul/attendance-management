@@ -1,98 +1,73 @@
-'use client';
-
-import { useEffect, useState } from 'react';
+"use client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
   ResponsiveContainer,
   LineChart,
   Line,
   PieChart,
   Pie,
-  Cell,
-  Legend
+  Cell
 } from 'recharts';
 import { TrendingUp, Users, DollarSign, Calendar } from 'lucide-react';
 
-// Sample data - in a real app, this would come from the database
-const admissionTrendsData = [
-  { month: 'Jan', students: 45, target: 50 },
-  { month: 'Feb', students: 52, target: 50 },
-  { month: 'Mar', students: 48, target: 50 },
-  { month: 'Apr', students: 61, target: 60 },
-  { month: 'May', students: 55, target: 60 },
-  { month: 'Jun', students: 67, target: 60 },
-  { month: 'Jul', students: 72, target: 70 },
-  { month: 'Aug', students: 69, target: 70 },
-  { month: 'Sep', students: 78, target: 75 },
-  { month: 'Oct', students: 82, target: 80 },
-  { month: 'Nov', students: 79, target: 80 },
-  { month: 'Dec', students: 85, target: 85 },
-];
+const chartConfig = {
+  students: { label: 'Students', color: 'hsl(var(--chart-1))' },
+  target: { label: 'Target', color: 'hsl(var(--chart-2))' },
+  collection: { label: 'Collection', color: 'hsl(var(--chart-3))' },
+  expense: { label: 'Expense', color: 'hsl(var(--chart-4))' },
+  attendance: { label: 'Attendance', color: 'hsl(var(--chart-5))' }
+}
 
-const collectionVsExpenseData = [
-  { month: 'Jan', collection: 450000, expense: 320000 },
-  { month: 'Feb', collection: 520000, expense: 340000 },
-  { month: 'Mar', collection: 480000, expense: 350000 },
-  { month: 'Apr', collection: 610000, expense: 380000 },
-  { month: 'May', collection: 550000, expense: 360000 },
-  { month: 'Jun', collection: 670000, expense: 400000 },
-  { month: 'Jul', collection: 720000, expense: 420000 },
-  { month: 'Aug', collection: 690000, expense: 410000 },
-  { month: 'Sep', collection: 780000, expense: 450000 },
-  { month: 'Oct', collection: 820000, expense: 470000 },
-  { month: 'Nov', collection: 790000, expense: 460000 },
-  { month: 'Dec', collection: 850000, expense: 480000 },
-];
+interface DashboardChartsProps {
+  admissionData: any[];
+  financeData: any[];
+  attendanceData: any[];
+  classAttendanceData: any[];
+}
 
-const attendanceData = [
-  { name: 'Present', value: 85, color: '#10b981' },
-  { name: 'Absent', value: 12, color: '#ef4444' },
-  { name: 'Late', value: 3, color: '#f59e0b' },
-];
+export function DashboardCharts({
+  admissionData,
+  financeData,
+  attendanceData,
+  classAttendanceData
+}: DashboardChartsProps) {
+  // Validate and clean data to prevent NaN errors
+  const cleanAdmissionData = (admissionData || []).map(item => ({
+    month: item?.month || 'N/A',
+    students: isFinite(Number(item?.students)) ? Number(item.students) : 0,
+    target: isFinite(Number(item?.target)) ? Number(item.target) : 0
+  }));
 
-const classWiseAttendanceData = [
-  { class: 'Class 6', attendance: 88 },
-  { class: 'Class 7', attendance: 92 },
-  { class: 'Class 8', attendance: 85 },
-  { class: 'Class 9', attendance: 90 },
-  { class: 'Class 10', attendance: 87 },
-  { class: 'HSC 1st', attendance: 82 },
-  { class: 'HSC 2nd', attendance: 79 },
-];
+  const cleanFinanceData = (financeData || []).map(item => ({
+    month: item?.month || 'N/A',
+    collection: isFinite(Number(item?.collection)) ? Number(item.collection) : 0,
+    expense: isFinite(Number(item?.expense)) ? Number(item.expense) : 0
+  }));
 
-export function DashboardCharts() {
-  const [loading, setLoading] = useState(true);
+  const cleanAttendanceData = (attendanceData || []).map(item => ({
+    name: item?.name || 'Unknown',
+    value: isFinite(Number(item?.value)) ? Number(item.value) : 0,
+    color: item?.color || '#000000'
+  }));
 
-  useEffect(() => {
-    // Simulate loading
-    const timer = setTimeout(() => setLoading(false), 1000);
-    return () => clearTimeout(timer);
-  }, []);
+  const cleanClassAttendanceData = (classAttendanceData || []).filter(item => 
+    item?.class && isFinite(Number(item?.attendance))
+  ).map(item => ({
+    class: item.class,
+    attendance: Math.max(0, Math.min(100, Number(item.attendance)))
+  }));
 
-  if (loading) {
-    return (
-      <div className="grid gap-6 md:grid-cols-2">
-        {[1, 2, 3, 4].map((i) => (
-          <Card key={i} className="animate-pulse">
-            <CardHeader>
-              <div className="h-4 bg-muted rounded w-32"></div>
-              <div className="h-3 bg-muted rounded w-48"></div>
-            </CardHeader>
-            <CardContent>
-              <div className="h-64 bg-muted rounded"></div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    );
-  }
+  // Fallback data if arrays are empty
+  const safeClassAttendanceData = cleanClassAttendanceData.length > 0 
+    ? cleanClassAttendanceData 
+    : [{ class: 'No Data', attendance: 0 }];
 
   return (
     <div className="grid gap-6 md:grid-cols-2">
@@ -108,44 +83,29 @@ export function DashboardCharts() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={admissionTrendsData}>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-              <XAxis 
-                dataKey="month" 
-                className="text-xs"
-                tick={{ fontSize: 12 }}
+          <ChartContainer config={chartConfig}>
+            <LineChart data={cleanAdmissionData}>
+              <CartesianGrid vertical={false} />
+              <XAxis dataKey="month" tickLine={false} axisLine={false} />
+              <YAxis tickLine={false} axisLine={false} />
+              <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+              <Line
+                dataKey="students"
+                type="monotone"
+                stroke="var(--color-students)"
+                strokeWidth={2}
+                dot={false}
               />
-              <YAxis 
-                className="text-xs"
-                tick={{ fontSize: 12 }}
-              />
-              <Tooltip 
-                contentStyle={{
-                  backgroundColor: 'hsl(var(--card))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: '8px',
-                }}
-              />
-              <Line 
-                type="monotone" 
-                dataKey="students" 
-                stroke="#3b82f6" 
-                strokeWidth={3}
-                dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
-                name="Admissions"
-              />
-              <Line 
-                type="monotone" 
-                dataKey="target" 
-                stroke="#94a3b8" 
+              <Line
+                dataKey="target"
+                type="monotone"
+                stroke="var(--color-target)"
                 strokeWidth={2}
                 strokeDasharray="5 5"
-                dot={{ fill: '#94a3b8', strokeWidth: 2, r: 3 }}
-                name="Target"
+                dot={false}
               />
             </LineChart>
-          </ResponsiveContainer>
+          </ChartContainer>
           <div className="flex items-center justify-between mt-4">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
@@ -177,44 +137,28 @@ export function DashboardCharts() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={collectionVsExpenseData}>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-              <XAxis 
-                dataKey="month" 
-                className="text-xs"
-                tick={{ fontSize: 12 }}
-              />
-              <YAxis 
-                className="text-xs"
-                tick={{ fontSize: 12 }}
+          <ChartContainer config={chartConfig}>
+            <BarChart data={cleanFinanceData}>
+              <CartesianGrid vertical={false} />
+              <XAxis dataKey="month" tickLine={false} axisLine={false} />
+              <YAxis
+                tickLine={false}
+                axisLine={false}
                 tickFormatter={(value) => `৳${(value / 1000).toFixed(0)}K`}
               />
-              <Tooltip 
-                contentStyle={{
-                  backgroundColor: 'hsl(var(--card))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: '8px',
-                }}
-                formatter={(value: number, name: string) => [
-                  `৳${value.toLocaleString()}`,
-                  name === 'collection' ? 'Collection' : 'Expense'
-                ]}
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent
+                  formatter={(value, name) => [
+                    `৳${Number(value).toLocaleString()}`,
+                    name === 'collection' ? 'Collection' : 'Expense'
+                  ]}
+                />}
               />
-              <Bar 
-                dataKey="collection" 
-                fill="#10b981" 
-                radius={[4, 4, 0, 0]}
-                name="Collection"
-              />
-              <Bar 
-                dataKey="expense" 
-                fill="#ef4444" 
-                radius={[4, 4, 0, 0]}
-                name="Expense"
-              />
+              <Bar dataKey="collection" fill="var(--color-collection)" radius={4} />
+              <Bar dataKey="expense" fill="var(--color-expense)" radius={4} />
             </BarChart>
-          </ResponsiveContainer>
+          </ChartContainer>
           <div className="flex items-center justify-between mt-4">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
@@ -245,38 +189,32 @@ export function DashboardCharts() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-center">
-            <ResponsiveContainer width="100%" height={250}>
-              <PieChart>
-                <Pie
-                  data={attendanceData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={100}
-                  paddingAngle={5}
-                  dataKey="value"
-                >
-                  {attendanceData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip 
-                  formatter={(value: number) => [`${value}%`, 'Percentage']}
-                  contentStyle={{
-                    backgroundColor: 'hsl(var(--card))',
-                    border: '1px solid hsl(var(--border))',
-                    borderRadius: '8px',
-                  }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
+          <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[250px]">
+            <PieChart>
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent
+                  formatter={(value) => [`${value}%`, 'Percentage']}
+                />}
+              />
+              <Pie
+                data={cleanAttendanceData}
+                dataKey="value"
+                nameKey="name"
+                innerRadius={60}
+                strokeWidth={5}
+              >
+                {attendanceData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+            </PieChart>
+          </ChartContainer>
           <div className="flex items-center justify-center gap-6 mt-4">
-            {attendanceData.map((item, index) => (
+            {cleanAttendanceData.map((item, index) => (
               <div key={index} className="flex items-center gap-2">
-                <div 
-                  className="w-3 h-3 rounded-full" 
+                <div
+                  className="w-3 h-3 rounded-full"
                   style={{ backgroundColor: item.color }}
                 ></div>
                 <span className="text-sm text-muted-foreground">
@@ -300,41 +238,30 @@ export function DashboardCharts() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={classWiseAttendanceData} layout="horizontal">
-              <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-              <XAxis 
-                type="number" 
-                domain={[0, 100]}
-                className="text-xs"
-                tick={{ fontSize: 12 }}
-                tickFormatter={(value) => `${value}%`}
-              />
-              <YAxis 
-                type="category" 
-                dataKey="class" 
-                className="text-xs"
-                tick={{ fontSize: 12 }}
-                width={60}
-              />
-              <Tooltip 
-                formatter={(value: number) => [`${value}%`, 'Attendance']}
-                contentStyle={{
-                  backgroundColor: 'hsl(var(--card))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: '8px',
-                }}
-              />
-              <Bar 
-                dataKey="attendance" 
-                fill="#f59e0b"
-                radius={[0, 4, 4, 0]}
-              />
-            </BarChart>
-          </ResponsiveContainer>
+          {safeClassAttendanceData.length > 0 && safeClassAttendanceData[0].class !== 'No Data' ? (
+            <ChartContainer config={chartConfig}>
+              <BarChart data={safeClassAttendanceData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="class" />
+                <YAxis domain={[0, 100]} tickFormatter={(value) => `${value}%`} />
+                <ChartTooltip
+                  content={<ChartTooltipContent
+                    formatter={(value) => [`${value}%`, 'Attendance']}
+                  />}
+                />
+                <Bar dataKey="attendance" fill="var(--color-attendance)" radius={4} />
+              </BarChart>
+            </ChartContainer>
+          ) : (
+            <div className="flex items-center justify-center h-64 text-muted-foreground">
+              No attendance data available
+            </div>
+          )}
           <div className="flex items-center justify-between mt-4">
             <div className="text-sm text-muted-foreground">
-              Average: 86.1%
+              Average: {safeClassAttendanceData.length > 0 && safeClassAttendanceData[0].class !== 'No Data' ?
+                Math.round(safeClassAttendanceData.reduce((sum, item) => sum + item.attendance, 0) / safeClassAttendanceData.length)
+                : 0}%
             </div>
             <Badge variant="outline" className="text-orange-600 border-orange-200">
               Target: 85%

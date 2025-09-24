@@ -17,7 +17,6 @@ import SubmitButton from '@/components/submit-button'
 
 export default function StudentCreatePage() {
     const router = useRouter()
-    const [session, setSession] = useState<any>(null)
     const [classes, setClasses] = useState<any[]>([])
     const [batches, setBatches] = useState<any[]>([])
     const [sections, setSections] = useState<any[]>([])
@@ -76,7 +75,6 @@ export default function StudentCreatePage() {
         try {
             const currentSession = await getCurrentSession()
             if (currentSession) {
-                setSession(currentSession)
                 form.setValue('sessionId', currentSession.id)
 
                 const classesData = await getClasses(currentSession.id)
@@ -116,14 +114,11 @@ export default function StudentCreatePage() {
     return (
         <div className="min-h-screen bg-gray-50/50">
             <div className="container mx-auto p-6 max-w-5xl">
-                <div className="mb-8">
-                    <div className="flex items-center gap-4 mb-2">
-                        <Button variant="ghost" size="sm" onClick={() => router.back()}>
-                            <ArrowLeft className="h-4 w-4" />
-                        </Button>
-                        <h1 className="text-3xl font-bold text-gray-900">Create New Student</h1>
-                    </div>
-                    <p className="text-gray-600 ml-12">Add a new student to the system with their personal and academic information.</p>
+                <div className="flex items-center gap-4 mb-6">
+                    <Button variant="ghost" size="sm" onClick={() => router.back()}>
+                        <ArrowLeft className="h-4 w-4" />
+                    </Button>
+                    <h1 className="text-2xl font-bold text-gray-900">Create New Student</h1>
                 </div>
 
                 <Form {...form}>

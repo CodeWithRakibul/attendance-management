@@ -21,7 +21,7 @@ export function AddNoteDialog({ studentId, open, onOpenChange }: AddNoteDialogPr
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!note.trim()) {
       toast.error('Please enter a note');
       return;
@@ -62,19 +62,17 @@ export function AddNoteDialog({ studentId, open, onOpenChange }: AddNoteDialogPr
         </DialogHeader>
 
         <form onSubmit={handleSubmit}>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="note">Note *</Label>
-              <Textarea
-                id="note"
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                placeholder="Enter your note about the student..."
-                rows={4}
-                required
-                autoFocus
-              />
-            </div>
+          <div className="space-y-2">
+            <Label className='block' htmlFor="note">Note *</Label>
+            <Textarea
+              id="note"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder="Enter your note about the student..."
+              rows={4}
+              required
+              autoFocus
+            />
           </div>
 
           <DialogFooter className="mt-6">

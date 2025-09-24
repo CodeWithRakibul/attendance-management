@@ -49,10 +49,11 @@ export async function getStudentById(id: string) {
   return prisma.student.findUnique({
     where: { id },
     include: {
-      session: { select: { year: true } },
-      class: { select: { name: true } },
-      batch: { select: { name: true } },
-      section: { select: { name: true } },
+      session: true,
+      class: true,
+      batch: true,
+      section: true,
+      notes: { include: { staff: { select: { personal: true } } }, orderBy: { createdAt: 'desc' } },
       collections: { include: { feeMaster: true } },
       attendanceStudent: { orderBy: { date: 'desc' }, take: 30 }
     }
@@ -84,6 +85,13 @@ export async function addStudentNote(data: {
   note: string
 }) {
   return prisma.studentNote.create({ data })
+}
+
+export async function updateStudentNote(id: string, note: string) {
+  return prisma.studentNote.update({
+    where: { id },
+    data: { note }
+  })
 }
 
 export async function deleteStudentNote(id: string) {

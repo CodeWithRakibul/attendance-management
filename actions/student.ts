@@ -6,6 +6,7 @@ import {
   updateStudent,
   deleteStudent,
   addStudentNote,
+  updateStudentNote,
   deleteStudentNote,
   getStudents as getStudentsQuery,
   getStudentById
@@ -20,6 +21,7 @@ import {
   getSections as getSectionsQuery
 } from '@/queries/index'
 import type { StudentFormData, StudentFilters } from '@/types'
+import { prisma } from '@/lib/prisma'
 
 export async function createStudentAction(data: StudentFormData) {
   try {
@@ -77,11 +79,35 @@ export async function addStudentNoteAction(data: {
   note: string
 }) {
   try {
-    await addStudentNote(data)
+    // Handle temp staff ID by getting first available teacher
+    let staffId = data.staffId
+    if (staffId === 'temp-staff-id') {
+      const firstTeacher = await prisma.teacher.findFirst({
+        where: { status: 'ACTIVE' },
+        select: { id: true }
+      })
+      if (!firstTeacher) {
+        return { success: false, error: 'No active teachers found' }
+      }
+      staffId = firstTeacher.id
+    }
+
+    await addStudentNote({ ...data, staffId })
     revalidatePath(`/dashboard/students`)
     return { success: true }
   } catch (error) {
+    console.log({ error });
     return { success: false, error: 'Failed to add note' }
+  }
+}
+
+export async function updateStudentNoteAction(id: string, note: string) {
+  try {
+    await updateStudentNote(id, note)
+    revalidatePath('/dashboard/students')
+    return { success: true }
+  } catch (error) {
+    return { success: false, error: 'Failed to update note' }
   }
 }
 

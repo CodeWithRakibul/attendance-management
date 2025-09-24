@@ -87,6 +87,7 @@ interface DataTableProps<T> {
     onDeleteSelected?: (selectedIds: string[]) => Promise<void>;
     showDeleteButton?: boolean;
     deleteButtonLabel?: string;
+    createIcon?: React.ReactNode;
     filters?: {
         columnId: string;
         title: string;
@@ -196,6 +197,7 @@ export function DataTable<T>({
     onDeleteSelected,
     showDeleteButton = false,
     deleteButtonLabel = 'Delete Selected',
+    createIcon = <IconPlus className='h-4 w-4' />,
     filters = []
 }: DataTableProps<T>) {
     const [data, setData] = React.useState(() => initialData);
@@ -245,6 +247,15 @@ export function DataTable<T>({
         enableRowSelection,
         enableGlobalFilter: enableSearch,
         globalFilterFn: enableSearch ? 'includesString' : undefined,
+        filterFns: {
+            multiSelect: (row, columnId, filterValue) => {
+                if (!filterValue || !Array.isArray(filterValue) || filterValue.length === 0) {
+                    return true;
+                }
+                const rowValue = row.getValue(columnId);
+                return filterValue.includes(String(rowValue));
+            }
+        },
         onRowSelectionChange: enableRowSelection ? setRowSelection : undefined,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
@@ -312,9 +323,9 @@ export function DataTable<T>({
                                 {header.isPlaceholder
                                     ? null
                                     : flexRender(
-                                          header.column.columnDef.header,
-                                          header.getContext()
-                                      )}
+                                        header.column.columnDef.header,
+                                        header.getContext()
+                                    )}
                             </TableHead>
                         ))}
                     </TableRow>
@@ -372,13 +383,31 @@ export function DataTable<T>({
                                     const column = table.getColumn(filter.columnId);
                                     const selectedValues =
                                         (column?.getFilterValue() as string[]) || [];
+                                    
+                                    // Get unique values from the actual data using the column's accessorFn
+                                    const columnDef = table.getAllColumns().find(col => col.id === filter.columnId);
                                     const uniqueValues = Array.from(
-                                        new Set(data.map((row) => (row as any)[filter.columnId]))
+                                        new Set(
+                                            data.map((row) => {
+                                                if (columnDef?.accessorFn) {
+                                                    return columnDef.accessorFn(row, 0);
+                                                }
+                                                return (row as any)[filter.columnId];
+                                            }).filter(Boolean)
+                                        )
                                     );
+                                    
                                     const valueCounts = new Map();
                                     data.forEach((row) => {
-                                        const value = (row as any)[filter.columnId];
-                                        valueCounts.set(value, (valueCounts.get(value) || 0) + 1);
+                                        let value;
+                                        if (columnDef?.accessorFn) {
+                                            value = columnDef.accessorFn(row, 0);
+                                        } else {
+                                            value = (row as any)[filter.columnId];
+                                        }
+                                        if (value) {
+                                            valueCounts.set(value, (valueCounts.get(value) || 0) + 1);
+                                        }
                                     });
 
                                     const handleFilterChange = (
@@ -392,7 +421,7 @@ export function DataTable<T>({
                                         } else {
                                             newValues = currentValues.filter((v) => v !== value);
                                         }
-                                        // If no values selected, clear the filter completely
+                                        // Set filter value as array for multiSelect filter
                                         column?.setFilterValue(
                                             newValues.length > 0 ? newValues : undefined
                                         );
@@ -484,7 +513,7 @@ export function DataTable<T>({
                             )}
                         {showCreateButton && onCreateNew && (
                             <Button onClick={onCreateNew} className='flex items-center gap-2'>
-                                <IconPlus className='h-4 w-4' />
+                                {createIcon}
                                 <span className='sr-only sm:not-sr-only'>{createNewLabel}</span>
                             </Button>
                         )}

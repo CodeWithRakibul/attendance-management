@@ -36,8 +36,8 @@ export function StudentsStats({
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      <Card className="relative overflow-hidden border-l-4 border-l-blue-500 hover:shadow-lg transition-shadow duration-200">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      <Card className="relative overflow-hidden border-l-4 border-l-blue-500 hover:shadow-lg transition-shadow duration-200 !gap-2">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0">
           <CardTitle className="text-sm font-medium text-muted-foreground">Total Students</CardTitle>
           <div className="p-2 bg-blue-100 rounded-full">
             <IconUsers className="h-4 w-4 text-blue-600" />
@@ -51,8 +51,8 @@ export function StudentsStats({
         </CardContent>
       </Card>
 
-      <Card className="relative overflow-hidden border-l-4 border-l-green-500 hover:shadow-lg transition-shadow duration-200">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      <Card className="relative overflow-hidden border-l-4 border-l-green-500 hover:shadow-lg transition-shadow duration-200 !gap-2">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0">
           <CardTitle className="text-sm font-medium text-muted-foreground">Active Students</CardTitle>
           <div className="p-2 bg-green-100 rounded-full">
             <IconUserCheck className="h-4 w-4 text-green-600" />
@@ -71,8 +71,8 @@ export function StudentsStats({
         </CardContent>
       </Card>
 
-      <Card className="relative overflow-hidden border-l-4 border-l-purple-500 hover:shadow-lg transition-shadow duration-200">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      <Card className="relative overflow-hidden border-l-4 border-l-purple-500 hover:shadow-lg transition-shadow duration-200 !gap-2">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0">
           <CardTitle className="text-sm font-medium text-muted-foreground">New Admissions</CardTitle>
           <div className="p-2 bg-purple-100 rounded-full">
             <IconUserPlus className="h-4 w-4 text-purple-600" />
@@ -100,8 +100,8 @@ export function StudentsStats({
         </CardContent>
       </Card>
 
-      <Card className="relative overflow-hidden border-l-4 border-l-orange-500 hover:shadow-lg transition-shadow duration-200">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      <Card className="relative overflow-hidden border-l-4 border-l-orange-500 hover:shadow-lg transition-shadow duration-200 !gap-2">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0">
           <CardTitle className="text-sm font-medium text-muted-foreground">Pending Fees</CardTitle>
           <div className="p-2 bg-orange-100 rounded-full">
             <IconCreditCard className="h-4 w-4 text-orange-600" />

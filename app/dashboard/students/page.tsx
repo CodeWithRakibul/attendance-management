@@ -1,9 +1,6 @@
 import { Suspense } from 'react';
-import { getStudents, getSessions, getClasses, getBatches, getSections } from './actions';
 import { StudentsPageContent } from './components/students-page-content';
 import { StudentsPageSkeleton } from './components/students-page-skeleton';
-import { StudentsHeader } from './components/students-header';
-import { StudentsStats } from './components/students-stats';
 
 export default async function StudentsPage({
     searchParams
@@ -22,21 +19,17 @@ export default async function StudentsPage({
     const sectionFilter = typeof params.section === 'string' ? params.section : 'all';
 
     return (
-        <div className='space-y-6'>
-            <StudentsHeader />
-
-            <Suspense fallback={<StudentsPageSkeleton />}>
-                <StudentsPageContent
-                    searchParams={{
-                        search,
-                        class: classFilter,
-                        status: statusFilter,
-                        batch: batchFilter,
-                        gender: genderFilter,
-                        section: sectionFilter
-                    }}
-                />
-            </Suspense>
-        </div>
+        <Suspense fallback={<StudentsPageSkeleton />}>
+            <StudentsPageContent
+                searchParams={{
+                    search,
+                    class: classFilter,
+                    status: statusFilter,
+                    batch: batchFilter,
+                    gender: genderFilter,
+                    section: sectionFilter
+                }}
+            />
+        </Suspense>
     );
 }

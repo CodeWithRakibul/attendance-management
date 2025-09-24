@@ -230,19 +230,22 @@ export function StudentsDataTable({
             id: 'className',
             accessorFn: (row) => row.class?.name || '',
             header: 'Class',
-            cell: ({ row }) => row.original.class?.name || 'N/A'
+            cell: ({ row }) => row.original.class?.name || 'N/A',
+            filterFn: 'multiSelect'
         },
         {
             id: 'sectionName',
             accessorFn: (row) => row.section?.name || '',
             header: 'Section',
-            cell: ({ row }) => row.original.section?.name || 'N/A'
+            cell: ({ row }) => row.original.section?.name || 'N/A',
+            filterFn: 'multiSelect'
         },
         {
             id: 'batchName',
             accessorFn: (row) => row.batch?.name || '',
             header: 'Batch',
-            cell: ({ row }) => row.original.batch?.name || 'N/A'
+            cell: ({ row }) => row.original.batch?.name || 'N/A',
+            filterFn: 'multiSelect'
         },
         {
             id: 'gender',
@@ -254,7 +257,8 @@ export function StudentsDataTable({
             cell: ({ row }) => {
                 const personal = row.original.personal as any;
                 return personal?.gender || 'N/A';
-            }
+            },
+            filterFn: 'multiSelect'
         },
         {
             id: 'fatherName',
@@ -325,7 +329,8 @@ export function StudentsDataTable({
             cell: ({ row }) => {
                 const status = row.original.status;
                 return <Badge className={getStatusColor(status)}>{status}</Badge>;
-            }
+            },
+            filterFn: 'multiSelect'
         },
         {
             id: 'actions',
@@ -428,20 +433,6 @@ export function StudentsDataTable({
 
     return (
         <Card>
-            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-4'>
-                <CardTitle>Students</CardTitle>
-                <div className='flex items-center gap-2'>
-                    <Button
-                        variant='outline'
-                        size='sm'
-                        onClick={handleExportAll}
-                        className='flex items-center gap-2'
-                    >
-                        <IconDownload className='h-4 w-4' />
-                        Export All
-                    </Button>
-                </div>
-            </CardHeader>
             <CardContent>
                 <DataTable
                     data={students}
@@ -453,7 +444,11 @@ export function StudentsDataTable({
                     pageSize={10}
                     getRowId={(row) => row.id}
                     onDeleteSelected={handleBulkDelete}
+                    createNewLabel='Export All'
+                    onCreateNew={handleExportAll}
+                    showCreateButton
                     showDeleteButton={true}
+                    createIcon={<IconDownload className='h-4 w-4' />}
                     deleteButtonLabel='Delete Selected'
                     filters={filters}
                 />

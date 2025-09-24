@@ -43,8 +43,7 @@ export async function getStudents(sessionId: string, filters?: StudentFilters) {
       session: { select: { year: true } },
       class: { select: { name: true } },
       batch: { select: { name: true } },
-      section: { select: { name: true } },
-      notes: { include: { staff: true }, orderBy: { createdAt: 'desc' } }
+      section: { select: { name: true } }
     },
     orderBy: { createdAt: 'desc' }
   })
@@ -58,7 +57,6 @@ export async function getStudentById(id: string) {
       class: { select: { name: true } },
       batch: { select: { name: true } },
       section: { select: { name: true } },
-      notes: { include: { staff: true }, orderBy: { createdAt: 'desc' } },
       collections: { include: { feeMaster: true } },
       attendanceStudent: { orderBy: { date: 'desc' }, take: 30 }
     }

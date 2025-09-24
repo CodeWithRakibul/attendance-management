@@ -29,14 +29,12 @@ import {
     IconTrash,
     IconPhone,
     IconMail,
-    IconUser,
-    IconCalendar,
-    IconSchool,
     IconDownload
 } from '@tabler/icons-react';
 import { ColumnDef } from '@tanstack/react-table';
 import { format, isValid } from 'date-fns';
 import { StudentTableData } from '@/types';
+import { useRouter } from 'next/navigation';
 
 interface StudentsDataTableProps {
     students: StudentTableData[];
@@ -58,6 +56,7 @@ export function StudentsDataTable({
     const [editDialogOpen, setEditDialogOpen] = useState(false);
     const [viewStudent, setViewStudent] = useState<StudentTableData | null>(null);
     const [viewDialogOpen, setViewDialogOpen] = useState(false);
+    const { push } = useRouter();
 
     const handleDelete = async (studentId: string) => {
         setIsLoading(true);
@@ -345,19 +344,13 @@ export function StudentsDataTable({
                         <DropdownMenuContent align='end'>
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <DropdownMenuItem
-                                onClick={() => {
-                                    setViewStudent(student);
-                                    setViewDialogOpen(true);
-                                }}
+                                onClick={() => push(`/dashboard/students/${student.id}`)}
                             >
                                 <IconEye className='mr-2 h-4 w-4' />
                                 View Details
                             </DropdownMenuItem>
                             <DropdownMenuItem
-                                onClick={() => {
-                                    setEditStudent(student);
-                                    setEditDialogOpen(true);
-                                }}
+                                onClick={() => push(`/dashboard/students/${student.id}/edit`)}
                             >
                                 <IconEdit className='mr-2 h-4 w-4' />
                                 Edit

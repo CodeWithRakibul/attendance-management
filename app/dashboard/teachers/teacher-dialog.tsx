@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { IconEdit, IconX } from '@tabler/icons-react';
 import { Teacher } from './columns';
-import { getTeacher } from './actions';
+import { getTeacher } from '@/queries';
 import { TeacherOverviewTab } from './tabs/teacher-overview-tab';
 import { TeacherAttendanceTab } from './tabs/teacher-attendance-tab';
 import { TeacherLeavesTab } from './tabs/teacher-leaves-tab';
@@ -54,7 +54,7 @@ export function TeacherDialog({ teacher, open, onOpenChange }: TeacherDialogProp
   if (!teacher) return null;
 
   const name = teacher.personal.nameEn;
-  const initials = name.split(' ').map(n => n[0]).join('').toUpperCase();
+  const initials = name.split(' ').map(n => n.charAt(0)).join('').toUpperCase();
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -71,7 +71,7 @@ export function TeacherDialog({ teacher, open, onOpenChange }: TeacherDialogProp
                 <p className="text-sm text-muted-foreground">{teacher.personal.nameBn}</p>
               )}
               <div className="flex items-center space-x-2 mt-1">
-                <Badge variant="outline">{teacher.teacherId}</Badge>
+                <Badge variant="outline">{teacher.staffId}</Badge>
                 <Badge variant={teacher.status === 'ACTIVE' ? 'default' : 'secondary'}>
                   {teacher.status}
                 </Badge>

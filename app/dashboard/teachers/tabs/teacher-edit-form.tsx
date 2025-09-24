@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { IconX, IconPlus } from '@tabler/icons-react';
 import { toast } from 'sonner';
-import { updateTeacher, TeacherFormData } from '../actions';
+import { updateTeacher, TeacherCreateFormData } from '../actions';
 
 interface TeacherEditFormProps {
   teacher: any;
@@ -20,7 +20,7 @@ interface TeacherEditFormProps {
 
 export function TeacherEditForm({ teacher, onCancel, onComplete }: TeacherEditFormProps) {
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState<TeacherFormData>({
+  const [formData, setFormData] = useState<TeacherCreateFormData>({
     teacherId: '',
     personal: {
       nameEn: '',

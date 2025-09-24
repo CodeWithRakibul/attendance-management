@@ -53,7 +53,7 @@ export async function getStudentById(id: string) {
       class: true,
       batch: true,
       section: true,
-      notes: { include: { staff: { select: { personal: true } } }, orderBy: { createdAt: 'desc' } },
+      notes: { include: { staff: true }, orderBy: { createdAt: 'desc' } },
       collections: { include: { feeMaster: true } },
       attendanceStudent: { orderBy: { date: 'desc' }, take: 30 }
     }

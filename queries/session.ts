@@ -28,7 +28,7 @@ export async function createSession(year: string) {
   });
 }
 
-export async function updateSession(id: string, data: { year?: string; status?: string }) {
+export async function updateSession(id: string, data: { year?: string; status?: 'ACTIVE' | 'CLOSED' }) {
   return prisma.session.update({
     where: { id },
     data

@@ -258,7 +258,11 @@ export function StudentsDataTable({
             }
         },
         {
-            accessorKey: 'fatherName',
+            id: 'fatherName',
+            accessorFn: (row) => {
+                const guardian = row.guardian as any;
+                return guardian?.fatherName || '';
+            },
             header: "Father's Name",
             cell: ({ row }) => {
                 const guardian = row.original.guardian as any;
@@ -266,7 +270,12 @@ export function StudentsDataTable({
             }
         },
         {
-            accessorKey: 'contact',
+            id: 'contact',
+            accessorFn: (row) => {
+                const guardian = row.guardian as any;
+                const contact = guardian?.contact || {};
+                return contact?.smsNo || contact?.email || '';
+            },
             header: 'Contact',
             cell: ({ row }) => {
                 const guardian = row.original.guardian as any;
@@ -300,7 +309,11 @@ export function StudentsDataTable({
             }
         },
         {
-            accessorKey: 'dateOfBirth',
+            id: 'dateOfBirth',
+            accessorFn: (row) => {
+                const personal = row.personal as any;
+                return personal?.dob || '';
+            },
             header: 'Date of Birth',
             cell: ({ row }) => {
                 const personal = row.original.personal as any;

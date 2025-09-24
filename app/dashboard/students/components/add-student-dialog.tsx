@@ -38,7 +38,7 @@ import { StudentStatus } from '@prisma/client';
 
 interface AddStudentDialogProps {
     children: React.ReactNode;
-    sessions: Array<{ id: string; name: string }>;
+    sessions: Array<{ id: string; year: string }>;
     classes: Array<{ id: string; name: string }>;
     batches: Array<{ id: string; name: string }>;
     sections: Array<{ id: string; name: string }>;
@@ -387,7 +387,7 @@ export function AddStudentDialog({
                                     <SelectContent>
                                         {sessions.map((session) => (
                                             <SelectItem key={session.id} value={session.id}>
-                                                {session.name}
+                                                {session.year}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
@@ -574,7 +574,7 @@ export function AddStudentDialog({
                                         : 'border-gray-300 text-gray-400'
                                 }`}
                             >
-                                {currentStep > index + 1 ? '✓' : String(index + 1)}
+                                {currentStep > index + 1 ? '✓' : (index + 1).toString()}
                             </div>
                             <div className='ml-2 hidden sm:block'>
                                 <div

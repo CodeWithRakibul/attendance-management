@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { IconUser, IconPhone, IconMail, IconCalendar, IconMapPin, IconLoader2, IconEdit } from '@tabler/icons-react';
 import { updateStudentAction } from '../actions';
 import { toast } from 'sonner';
-import { StudentTableData } from '../types/student';
+import { StudentTableData } from '@/types/student';
 
 interface EditStudentDialogProps {
   student: StudentTableData | null;
@@ -85,16 +85,16 @@ export function EditStudentDialog({
         email: contact?.email || '',
         address: address?.present || '',
         emergencyContact: contact?.altNo || '',
-        sessionId: student.session?.id || '',
-        classId: student.class?.id || '',
-        batchId: student.batch?.id || '',
-        sectionId: student.section?.id || '',
-        rollNumber: student.rollNumber || '',
-        registrationNumber: student.registrationNumber || '',
+        sessionId: student.sessionId || '',
+        classId: student.classId || '',
+        batchId: student.batchId || '',
+        sectionId: student.sectionId || '',
+        rollNumber: student.roll || '',
+        registrationNumber: student.studentId || '',
         previousSchool: guardian?.previousSchool || '',
         guardianOccupation: guardian?.occupation || '',
         monthlyIncome: guardian?.monthlyIncome ? guardian.monthlyIncome.toString() : '',
-        notes: student.notes || '',
+        notes: '',
         status: student.status || '',
       });
     }
@@ -112,9 +112,34 @@ export function EditStudentDialog({
     startTransition(async () => {
       try {
         const result = await updateStudentAction(student.id, {
-          ...formData,
-          dateOfBirth: formData.dateOfBirth ? new Date(formData.dateOfBirth) : undefined,
-          monthlyIncome: formData.monthlyIncome ? parseFloat(formData.monthlyIncome) : undefined,
+          studentId: formData.registrationNumber,
+          sessionId: formData.sessionId,
+          classId: formData.classId,
+          batchId: formData.batchId,
+          sectionId: formData.sectionId,
+          roll: formData.rollNumber,
+          personal: {
+            nameEn: formData.nameEn,
+            nameBn: formData.nameBn,
+            dob: formData.dateOfBirth,
+            gender: formData.gender as 'MALE' | 'FEMALE' | 'OTHER',
+            bloodGroup: formData.bloodGroup
+          },
+          guardian: {
+            fatherName: formData.fatherNameEn,
+            motherName: formData.motherNameEn,
+            fatherOccupation: formData.guardianOccupation,
+            contact: {
+              smsNo: formData.phone,
+              altNo: formData.emergencyContact,
+              email: formData.email
+            }
+          },
+          address: {
+            present: formData.address
+          },
+          status: formData.status as any,
+          continuityTick: false
         });
 
         if (result.success) {

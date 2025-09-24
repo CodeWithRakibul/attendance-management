@@ -36,7 +36,7 @@ export async function StudentsHeader() {
         </Button>
         
         <AddStudentDialog
-          sessions={sessions.map(s => ({ id: s.id, name: s.year }))}
+          sessions={sessions.map(s => ({ id: s.id, year: s.year }))}
           classes={classes}
           batches={batches}
           sections={sections}

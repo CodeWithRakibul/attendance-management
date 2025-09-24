@@ -18,7 +18,7 @@ import {
   getClasses as getClassesQuery,
   getBatches as getBatchesQuery,
   getSections as getSectionsQuery 
-} from '@/queries'
+} from '@/queries/index'
 import type { StudentFormData, StudentFilters } from '@/types'
 
 export async function createStudentAction(data: StudentFormData) {

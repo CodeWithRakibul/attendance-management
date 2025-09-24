@@ -54,10 +54,11 @@ export type StudentWithRelations = Student & {
 };
 
 export type StudentTableData = Student & {
-  session: { year: string };
-  class: { name: string };
-  batch: { name: string };
-  section: { name: string };
+  session?: { year: string };
+  class?: { name: string };
+  batch?: { name: string };
+  section?: { name: string };
+  notes?: (StudentNote & { staff: Teacher })[];
 };
 
 export interface StudentFilters {

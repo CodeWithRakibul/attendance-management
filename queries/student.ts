@@ -27,17 +27,23 @@ export async function getStudents(sessionId: string, filters?: StudentFilters) {
   
   if (filters?.classId) where.classId = filters.classId
   if (filters?.batchId) where.batchId = filters.batchId
+  if (filters?.sectionId) where.sectionId = filters.sectionId
   if (filters?.status) where.status = filters.status
   if (filters?.search) {
-    where.studentId = { contains: filters.search, mode: 'insensitive' }
+    where.OR = [
+      { studentId: { contains: filters.search, mode: 'insensitive' } },
+      { personal: { path: ['nameEn'], string_contains: filters.search } },
+      { personal: { path: ['nameBn'], string_contains: filters.search } }
+    ]
   }
 
   return prisma.student.findMany({
     where,
     include: {
-      class: true,
-      batch: true,
-      section: true,
+      session: { select: { year: true } },
+      class: { select: { name: true } },
+      batch: { select: { name: true } },
+      section: { select: { name: true } },
       notes: { include: { staff: true }, orderBy: { createdAt: 'desc' } }
     },
     orderBy: { createdAt: 'desc' }
@@ -48,9 +54,10 @@ export async function getStudentById(id: string) {
   return prisma.student.findUnique({
     where: { id },
     include: {
-      class: true,
-      batch: true,
-      section: true,
+      session: { select: { year: true } },
+      class: { select: { name: true } },
+      batch: { select: { name: true } },
+      section: { select: { name: true } },
       notes: { include: { staff: true }, orderBy: { createdAt: 'desc' } },
       collections: { include: { feeMaster: true } },
       attendanceStudent: { orderBy: { date: 'desc' }, take: 30 }

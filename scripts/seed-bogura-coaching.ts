@@ -357,7 +357,7 @@ async function main() {
         sessionId: session.id,
         feeMasterId: randomFeeMaster.id,
         amount: randomFeeMaster.amount,
-        method: ['CASH', 'MOBILE_BANKING', 'BANK_TRANSFER'][Math.floor(Math.random() * 3)],
+        method: ['CASH', 'MOBILE_BANKING', 'BANK_TRANSFER'][Math.floor(Math.random() * 3)] as 'CASH' | 'MOBILE_BANKING' | 'BANK_TRANSFER',
         status: Math.random() > 0.3 ? 'APPROVED' : 'PENDING',
         collectedBy: randomTeacher.id,
         collectedAt: new Date(),

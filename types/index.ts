@@ -6,6 +6,3 @@ export * from './attendance';
 export * from './fee';
 export * from './academic';
 export * from './common';
-
-// User types
-export * from './user.d';

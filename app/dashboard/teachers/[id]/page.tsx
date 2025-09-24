@@ -227,7 +227,7 @@ export default async function TeacherDetailsPage({ params }: TeacherDetailsPageP
             <CardContent className="grid gap-4 md:grid-cols-2">
               <div>
                 <label className="text-sm font-medium text-muted-foreground">Basic Salary</label>
-                <p className="text-lg font-semibold">৳{teacher.salaryInfo?.basic?.toLocaleString() || '0'}</p>
+                <p className="text-lg font-semibold">৳{teacher.salaryInfo?.basicSalary?.toLocaleString() || '0'}</p>
               </div>
               <div>
                 <label className="text-sm font-medium text-muted-foreground">Allowances</label>
@@ -236,7 +236,7 @@ export default async function TeacherDetailsPage({ params }: TeacherDetailsPageP
               <div>
                 <label className="text-sm font-medium text-muted-foreground">Total Salary</label>
                 <p className="text-xl font-bold text-primary">
-                  ৳{((teacher.salaryInfo?.basic || 0) + (teacher.salaryInfo?.allowances || 0)).toLocaleString()}
+                  ৳{((teacher.salaryInfo?.basicSalary || 0) + (teacher.salaryInfo?.allowances || 0)).toLocaleString()}
                 </p>
               </div>
             </CardContent>

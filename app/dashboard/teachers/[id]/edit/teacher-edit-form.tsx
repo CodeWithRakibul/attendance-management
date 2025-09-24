@@ -51,7 +51,7 @@ export function TeacherEditForm({ teacher, isEdit = true, onSuccess }: TeacherEd
       qualification: teacher?.qualification || '',
       experience: teacher?.experience || '',
       subjects: teacher?.subjects || [],
-      basicSalary: salaryInfo?.basic || 0,
+      basicSalary: salaryInfo?.basicSalary || 0,
       allowances: salaryInfo?.allowances || 0,
       status: teacher?.status || 'ACTIVE',
     },
@@ -75,29 +75,21 @@ export function TeacherEditForm({ teacher, isEdit = true, onSuccess }: TeacherEd
     try {
       const formData = {
         teacherId: data.teacherId,
-        personal: {
-          nameEn: data.nameEn,
-          nameBn: data.nameBn,
-          dob: data.dob,
-          gender: data.gender,
-          bloodGroup: data.bloodGroup,
-        },
-        contact: {
-          smsNo: data.mobile,
-          email: data.email,
-          address: {
-            present: data.presentAddress,
-            permanent: data.permanentAddress,
-          }
-        },
+        nameEn: data.nameEn,
+        nameBn: data.nameBn,
+        dob: data.dob,
+        gender: data.gender,
+        bloodGroup: data.bloodGroup,
+        mobile: data.mobile,
+        email: data.email,
+        presentAddress: data.presentAddress,
+        permanentAddress: data.permanentAddress,
         designation: data.designation,
         subjects: data.subjects,
         qualification: data.qualification,
         experience: data.experience,
-        salaryInfo: {
-          basic: data.basicSalary || 0,
-          allowances: data.allowances || 0,
-        },
+        basicSalary: data.basicSalary || 0,
+        allowances: data.allowances || 0,
         status: data.status,
       };
 

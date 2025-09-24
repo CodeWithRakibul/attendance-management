@@ -7,11 +7,17 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { IconArrowLeft, IconLoader2, IconSave } from '@tabler/icons-react';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { IconArrowLeft, IconLoader2, IconCalendar } from '@tabler/icons-react';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 import { updateStudentAction } from '../../../actions';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { StudentWithRelations } from '@/types/student';
+import { StudentWithRelations, StudentStatus } from '@/types/student';
+import { Save } from 'lucide-react';
+import SubmitButton from '@/components/submit-button';
 
 interface StudentEditFormProps {
   student: StudentWithRelations;
@@ -24,7 +30,7 @@ interface StudentEditFormProps {
 export function StudentEditForm({ student, sessions, classes, batches, sections }: StudentEditFormProps) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
-  
+
   const personal = student.personal as any;
   const guardian = student.guardian as any;
   const address = student.address as any;
@@ -35,7 +41,7 @@ export function StudentEditForm({ student, sessions, classes, batches, sections 
     nameBn: personal?.nameBn || '',
     fatherName: guardian?.fatherName || '',
     motherName: guardian?.motherName || '',
-    dateOfBirth: personal?.dob ? new Date(personal.dob).toISOString().split('T')[0] : '',
+    dateOfBirth: personal?.dob ? new Date(personal.dob) : undefined,
     gender: personal?.gender || '',
     bloodGroup: personal?.bloodGroup || '',
     phone: contact?.smsNo || '',
@@ -52,7 +58,7 @@ export function StudentEditForm({ student, sessions, classes, batches, sections 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     startTransition(async () => {
       try {
         const result = await updateStudentAction(student.id, {
@@ -65,7 +71,7 @@ export function StudentEditForm({ student, sessions, classes, batches, sections 
           personal: {
             nameEn: formData.nameEn,
             nameBn: formData.nameBn,
-            dob: formData.dateOfBirth,
+            dob: formData.dateOfBirth ? formData.dateOfBirth.toISOString() : '',
             gender: formData.gender as 'MALE' | 'FEMALE' | 'OTHER',
             bloodGroup: formData.bloodGroup
           },
@@ -115,7 +121,7 @@ export function StudentEditForm({ student, sessions, classes, batches, sections 
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="nameEn">Name (English) *</Label>
+                  <Label htmlFor="nameEn" className="block mb-2">Name (English) *</Label>
                   <Input
                     id="nameEn"
                     value={formData.nameEn}
@@ -125,7 +131,7 @@ export function StudentEditForm({ student, sessions, classes, batches, sections 
                   />
                 </div>
                 <div>
-                  <Label htmlFor="nameBn">Name (Bangla)</Label>
+                  <Label htmlFor="nameBn" className="block mb-2">Name (Bangla)</Label>
                   <Input
                     id="nameBn"
                     value={formData.nameBn}
@@ -133,10 +139,10 @@ export function StudentEditForm({ student, sessions, classes, batches, sections 
                   />
                 </div>
               </div>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="fatherName">Father's Name *</Label>
+                  <Label htmlFor="fatherName" className="block mb-2">Father's Name *</Label>
                   <Input
                     id="fatherName"
                     value={formData.fatherName}
@@ -145,7 +151,7 @@ export function StudentEditForm({ student, sessions, classes, batches, sections 
                   />
                 </div>
                 <div>
-                  <Label htmlFor="motherName">Mother's Name</Label>
+                  <Label htmlFor="motherName" className="block mb-2">Mother's Name</Label>
                   <Input
                     id="motherName"
                     value={formData.motherName}
@@ -156,16 +162,33 @@ export function StudentEditForm({ student, sessions, classes, batches, sections 
 
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <Label htmlFor="dateOfBirth">Date of Birth</Label>
-                  <Input
-                    id="dateOfBirth"
-                    type="date"
-                    value={formData.dateOfBirth}
-                    onChange={(e) => setFormData(prev => ({ ...prev, dateOfBirth: e.target.value }))}
-                  />
+                  <Label className="block mb-2">Date of Birth</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !formData.dateOfBirth && "text-muted-foreground"
+                        )}
+                      >
+                        <IconCalendar className="mr-2 h-4 w-4" />
+                        {formData.dateOfBirth ? format(formData.dateOfBirth, "PPP") : "Pick a date"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <Calendar
+                        className='w-full'
+                        mode="single"
+                        selected={formData.dateOfBirth}
+                        onSelect={(date) => setFormData(prev => ({ ...prev, dateOfBirth: date }))}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
                 </div>
                 <div>
-                  <Label htmlFor="gender">Gender *</Label>
+                  <Label htmlFor="gender" className="block mb-2">Gender *</Label>
                   <Select value={formData.gender} onValueChange={(value) => setFormData(prev => ({ ...prev, gender: value }))}>
                     <SelectTrigger>
                       <SelectValue />
@@ -178,7 +201,7 @@ export function StudentEditForm({ student, sessions, classes, batches, sections 
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="bloodGroup">Blood Group</Label>
+                  <Label htmlFor="bloodGroup" className="block mb-2">Blood Group</Label>
                   <Select value={formData.bloodGroup} onValueChange={(value) => setFormData(prev => ({ ...prev, bloodGroup: value }))}>
                     <SelectTrigger>
                       <SelectValue />
@@ -206,7 +229,7 @@ export function StudentEditForm({ student, sessions, classes, batches, sections 
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="phone">Phone Number</Label>
+                  <Label className="block mb-2" htmlFor="phone">Phone Number</Label>
                   <Input
                     id="phone"
                     value={formData.phone}
@@ -215,7 +238,7 @@ export function StudentEditForm({ student, sessions, classes, batches, sections 
                   />
                 </div>
                 <div>
-                  <Label htmlFor="email">Email</Label>
+                  <Label className="block mb-2" htmlFor="email">Email</Label>
                   <Input
                     id="email"
                     type="email"
@@ -224,9 +247,9 @@ export function StudentEditForm({ student, sessions, classes, batches, sections 
                   />
                 </div>
               </div>
-              
+
               <div>
-                <Label htmlFor="address">Address</Label>
+                <Label className="block mb-2" htmlFor="address">Address</Label>
                 <Textarea
                   id="address"
                   value={formData.address}
@@ -236,7 +259,7 @@ export function StudentEditForm({ student, sessions, classes, batches, sections 
               </div>
 
               <div>
-                <Label htmlFor="fatherOccupation">Father's Occupation</Label>
+                <Label className="block mb-2" htmlFor="fatherOccupation">Father's Occupation</Label>
                 <Input
                   id="fatherOccupation"
                   value={formData.fatherOccupation}
@@ -254,7 +277,7 @@ export function StudentEditForm({ student, sessions, classes, batches, sections 
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
-                <Label htmlFor="sessionId">Session *</Label>
+                <Label className="block mb-2" htmlFor="sessionId">Session *</Label>
                 <Select value={formData.sessionId} onValueChange={(value) => setFormData(prev => ({ ...prev, sessionId: value }))}>
                   <SelectTrigger>
                     <SelectValue />
@@ -268,9 +291,9 @@ export function StudentEditForm({ student, sessions, classes, batches, sections 
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div>
-                <Label htmlFor="classId">Class *</Label>
+                <Label className="block mb-2" htmlFor="classId">Class *</Label>
                 <Select value={formData.classId} onValueChange={(value) => setFormData(prev => ({ ...prev, classId: value }))}>
                   <SelectTrigger>
                     <SelectValue />
@@ -284,9 +307,9 @@ export function StudentEditForm({ student, sessions, classes, batches, sections 
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div>
-                <Label htmlFor="batchId">Batch</Label>
+                <Label className="block mb-2" htmlFor="batchId">Batch</Label>
                 <Select value={formData.batchId} onValueChange={(value) => setFormData(prev => ({ ...prev, batchId: value }))}>
                   <SelectTrigger>
                     <SelectValue />
@@ -300,9 +323,9 @@ export function StudentEditForm({ student, sessions, classes, batches, sections 
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div>
-                <Label htmlFor="sectionId">Section</Label>
+                <Label className="block mb-2" htmlFor="sectionId">Section</Label>
                 <Select value={formData.sectionId} onValueChange={(value) => setFormData(prev => ({ ...prev, sectionId: value }))}>
                   <SelectTrigger>
                     <SelectValue />
@@ -316,9 +339,9 @@ export function StudentEditForm({ student, sessions, classes, batches, sections 
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div>
-                <Label htmlFor="roll">Roll Number</Label>
+                <Label className="block mb-2" htmlFor="roll">Roll Number</Label>
                 <Input
                   id="roll"
                   type="number"
@@ -326,10 +349,10 @@ export function StudentEditForm({ student, sessions, classes, batches, sections 
                   onChange={(e) => setFormData(prev => ({ ...prev, roll: e.target.value }))}
                 />
               </div>
-              
+
               <div>
-                <Label htmlFor="status">Status</Label>
-                <Select value={formData.status} onValueChange={(value) => setFormData(prev => ({ ...prev, status: value }))}>
+                <Label className="block mb-2" htmlFor="status">Status</Label>
+                <Select value={formData.status} onValueChange={(value: StudentStatus) => setFormData(prev => ({ ...prev, status: value }))}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -348,19 +371,10 @@ export function StudentEditForm({ student, sessions, classes, batches, sections 
           <Button type="button" variant="outline" onClick={() => router.back()}>
             Cancel
           </Button>
-          <Button type="submit" disabled={isPending}>
-            {isPending ? (
-              <>
-                <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              <>
-                <IconSave className="mr-2 h-4 w-4" />
-                Save Changes
-              </>
-            )}
-          </Button>
+          <SubmitButton type="submit" loading={isPending}>
+            <Save className="size-4" />
+            Save Changes
+          </SubmitButton>
         </div>
       </form>
     </div>

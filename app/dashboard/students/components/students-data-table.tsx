@@ -2,39 +2,17 @@
 
 import { useState } from 'react';
 import {
-    deleteStudentAction,
-    bulkDeleteStudentsAction,
-    updateStudentStatusAction
+    bulkDeleteStudentsAction
 } from '../actions';
 import { toast } from 'sonner';
-import { EditStudentDialog } from './edit-student-dialog';
 import { StudentDetailsDialog } from './student-details-dialog';
-import { DataTable, createSelectionColumn } from '@/components/Table/data-table';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { DataTable } from '@/components/Table/data-table';
+import { Card, CardContent} from '@/components/ui/card';
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
-import {
-    IconDotsVertical,
-    IconEye,
-    IconEdit,
-    IconTrash,
-    IconPhone,
-    IconMail,
     IconDownload
 } from '@tabler/icons-react';
-import { ColumnDef } from '@tanstack/react-table';
-import { format, isValid } from 'date-fns';
+import { format } from 'date-fns';
 import { StudentTableData } from '@/types';
-import { useRouter } from 'next/navigation';
 import { columns } from './columns';
 
 interface StudentsDataTableProps {
@@ -53,11 +31,8 @@ export function StudentsDataTable({
     sections
 }: StudentsDataTableProps) {
     const [isLoading, setIsLoading] = useState(false);
-    const [editStudent, setEditStudent] = useState<StudentTableData | null>(null);
-    const [editDialogOpen, setEditDialogOpen] = useState(false);
     const [viewStudent, setViewStudent] = useState<StudentTableData | null>(null);
     const [viewDialogOpen, setViewDialogOpen] = useState(false);
-    const { push } = useRouter()
 
     const handleBulkDelete = async (selectedIds: string[]) => {
         if (selectedIds.length === 0) return;
@@ -75,12 +50,6 @@ export function StudentsDataTable({
         } finally {
             setIsLoading(false);
         }
-    };
-
-    const handleExportSelected = (selectedIds: string[]) => {
-        const selectedStudentData = students.filter((student) => selectedIds.includes(student.id));
-        const csvContent = generateCSV(selectedStudentData);
-        downloadCSV(csvContent, 'selected-students.csv');
     };
 
     const handleExportAll = () => {
@@ -196,17 +165,6 @@ export function StudentsDataTable({
                     filters={filters}
                 />
             </CardContent>
-
-            {/* Dialogs */}
-            <EditStudentDialog
-                student={editStudent}
-                open={editDialogOpen}
-                onOpenChange={setEditDialogOpen}
-                sessions={sessions}
-                classes={classes}
-                batches={batches}
-                sections={sections}
-            />
 
             <StudentDetailsDialog
                 student={viewStudent}

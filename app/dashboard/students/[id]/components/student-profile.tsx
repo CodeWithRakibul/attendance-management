@@ -2,7 +2,6 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { IconUser, IconPhone, IconSchool, IconNotes, IconCalendar } from '@tabler/icons-react';
-import { EditStudentDialog } from '../../components/edit-student-dialog';
 import { AddNoteDialog } from './add-note-dialog';
 import { EditNoteDialog } from './edit-note-dialog';
 import { StudentHeader } from './student-header';
@@ -12,8 +11,6 @@ import { NotesTab } from './notes-tab';
 import { PlaceholderTab } from './placeholder-tab';
 import { useState } from 'react';
 import { StudentWithRelations } from '@/types/student';
-import { deleteStudentNoteAction } from '@/actions/student';
-import { toast } from 'sonner';
 
 interface StudentProfileProps {
   student: StudentWithRelations;
@@ -23,8 +20,7 @@ interface StudentProfileProps {
   sections: Array<{ id: string; name: string }>;
 }
 
-export function StudentProfile({ student, sessions, classes, batches, sections }: StudentProfileProps) {
-  const [editOpen, setEditOpen] = useState(false);
+export function StudentProfile({ student }: StudentProfileProps) {
   const [noteOpen, setNoteOpen] = useState(false);
   const [editNoteOpen, setEditNoteOpen] = useState(false);
   const [selectedNote, setSelectedNote] = useState<{ id: string; note: string } | null>(null);
@@ -42,7 +38,6 @@ export function StudentProfile({ student, sessions, classes, batches, sections }
     <div className="space-y-6">
       <StudentHeader 
         student={student} 
-        onEdit={() => setEditOpen(true)} 
       />
 
       <Tabs defaultValue="overview" className="space-y-6">
@@ -103,16 +98,6 @@ export function StudentProfile({ student, sessions, classes, batches, sections }
           />
         </TabsContent>
       </Tabs>
-
-      <EditStudentDialog
-        student={student as any}
-        open={editOpen}
-        onOpenChange={setEditOpen}
-        sessions={sessions}
-        classes={classes}
-        batches={batches}
-        sections={sections}
-      />
 
       <AddNoteDialog
         studentId={student.id}

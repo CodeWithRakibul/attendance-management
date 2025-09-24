@@ -1,18 +1,17 @@
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { IconEdit, IconArrowLeft } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { cn } from '@/lib/utils';
+import { Student } from '@prisma/client';
 
 interface StudentHeaderProps {
-  student: {
-    studentId: string;
-    personal: any;
-  };
-  onEdit: () => void;
+  student: Student
 }
 
-export function StudentHeader({ student, onEdit }: StudentHeaderProps) {
+export function StudentHeader({ student }: StudentHeaderProps) {
   const router = useRouter();
   const personal = student.personal as any;
 
@@ -36,10 +35,10 @@ export function StudentHeader({ student, onEdit }: StudentHeaderProps) {
           </div>
         </div>
       </div>
-      <Button onClick={onEdit}>
-        <IconEdit className="h-4 w-4 mr-2" />
+      <Link href={`/dashboard/students/${student.id}/edit`} className={cn(buttonVariants({ variant: "default" }))} >
+        <IconEdit className="size-4" />
         Edit
-      </Button>
+      </Link>
     </div>
   );
 }

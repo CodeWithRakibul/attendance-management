@@ -180,7 +180,7 @@ export function StudentReports() {
                   <SelectValue placeholder="All statuses" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Statuses</SelectItem>
+                  <SelectItem value="NONE">All Statuses</SelectItem>
                   <SelectItem value="ACTIVE">Active</SelectItem>
                   <SelectItem value="INACTIVE">Inactive</SelectItem>
                   <SelectItem value="GRADUATED">Graduated</SelectItem>
@@ -202,7 +202,7 @@ export function StudentReports() {
                   <SelectValue placeholder="Select session" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Sessions</SelectItem>
+                  <SelectItem value="ALL_SESSIONS">All Sessions</SelectItem>
                   {sessions.map((session) => (
                     <SelectItem key={session.id} value={session.id}>
                       {session.year}
@@ -222,7 +222,7 @@ export function StudentReports() {
                   <SelectValue placeholder="Select class" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Classes</SelectItem>
+                  <SelectItem value="ALL_CLASSES">All Classes</SelectItem>
                   {classes.map((cls) => (
                     <SelectItem key={cls.id} value={cls.id}>
                       {cls.name}
@@ -242,7 +242,7 @@ export function StudentReports() {
                   <SelectValue placeholder="Select batch" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Batches</SelectItem>
+                  <SelectItem value="ALL_BATCHES">All Batches</SelectItem>
                   {batches.map((batch) => (
                     <SelectItem key={batch.id} value={batch.id}>
                       {batch.name}

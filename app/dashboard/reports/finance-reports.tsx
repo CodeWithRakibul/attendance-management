@@ -131,7 +131,7 @@ export function FinanceReports() {
   ];
 
   const feeTypes = [
-    { value: '', label: 'All Fee Types' },
+    { value: 'NONE', label: 'All Fee Types' },
     { value: 'ADMISSION', label: 'Admission Fee' },
     { value: 'TUITION', label: 'Tuition Fee' },
     { value: 'EXAM', label: 'Exam Fee' },
@@ -142,7 +142,7 @@ export function FinanceReports() {
   ];
 
   const paymentStatuses = [
-    { value: '', label: 'All Statuses' },
+    { value: 'NONE', label: 'All Statuses' },
     { value: 'APPROVED', label: 'Approved' },
     { value: 'PENDING', label: 'Pending' },
     { value: 'PARTIAL', label: 'Partial' },
@@ -299,7 +299,7 @@ export function FinanceReports() {
                   <SelectValue placeholder="Select session" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Sessions</SelectItem>
+                  <SelectItem value="ALL_SESSIONS">All Sessions</SelectItem>
                   {sessions.map((session) => (
                     <SelectItem key={session.id} value={session.id}>
                       {session.year}
@@ -319,7 +319,7 @@ export function FinanceReports() {
                   <SelectValue placeholder="Select class" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Classes</SelectItem>
+                  <SelectItem value="ALL_CLASSES">All Classes</SelectItem>
                   {classes.map((cls) => (
                     <SelectItem key={cls.id} value={cls.id}>
                       {cls.name}
@@ -339,7 +339,7 @@ export function FinanceReports() {
                   <SelectValue placeholder="Select batch" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Batches</SelectItem>
+                  <SelectItem value="ALL_BATCHES">All Batches</SelectItem>
                   {batches.map((batch) => (
                     <SelectItem key={batch.id} value={batch.id}>
                       {batch.name}

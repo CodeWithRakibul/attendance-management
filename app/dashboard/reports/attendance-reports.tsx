@@ -277,7 +277,7 @@ export function AttendanceReports() {
                     <SelectValue placeholder="Select session" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Sessions</SelectItem>
+                    <SelectItem value="ALL_SESSIONS">All Sessions</SelectItem>
                     {sessions.map((session) => (
                       <SelectItem key={session.id} value={session.id}>
                         {session.year}
@@ -297,7 +297,7 @@ export function AttendanceReports() {
                     <SelectValue placeholder="Select class" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Classes</SelectItem>
+                    <SelectItem value="ALL_CLASSES">All Classes</SelectItem>
                     {classes.map((cls) => (
                       <SelectItem key={cls.id} value={cls.id}>
                         {cls.name}
@@ -317,7 +317,7 @@ export function AttendanceReports() {
                     <SelectValue placeholder="Select batch" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Batches</SelectItem>
+                    <SelectItem value="ALL_BATCHES">All Batches</SelectItem>
                     {batches.map((batch) => (
                       <SelectItem key={batch.id} value={batch.id}>
                         {batch.name}

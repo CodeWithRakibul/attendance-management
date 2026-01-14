@@ -35,7 +35,7 @@ export async function getSessions() {
 
 export async function getClasses(sessionId?: string) {
   try {
-    const where = sessionId ? { sessionId } : {};
+    const where = sessionId && sessionId !== 'ALL_SESSIONS' ? { sessionId } : {};
     return await prisma.class.findMany({
       where,
       include: { session: true },
@@ -49,7 +49,7 @@ export async function getClasses(sessionId?: string) {
 
 export async function getBatches(classId?: string) {
   try {
-    const where = classId ? { classId } : {};
+    const where = classId && classId !== 'ALL_CLASSES' ? { classId } : {};
     return await prisma.batch.findMany({
       where,
       include: { class: true },
@@ -63,7 +63,7 @@ export async function getBatches(classId?: string) {
 
 export async function getSections(classId?: string) {
   try {
-    const where = classId ? { classId } : {};
+    const where = classId && classId !== 'ALL_CLASSES' ? { classId } : {};
     return await prisma.section.findMany({
       where,
       include: { class: true },
@@ -80,12 +80,12 @@ export async function getStudentReportData(filters: ReportFilters) {
   try {
     const where: any = {};
     
-    if (filters.sessionId) where.sessionId = filters.sessionId;
-    if (filters.classId) where.classId = filters.classId;
-    if (filters.batchId) where.batchId = filters.batchId;
-    if (filters.sectionId) where.sectionId = filters.sectionId;
-    if (filters.status) where.status = filters.status;
-    if (filters.gender) where['personal.gender'] = filters.gender;
+    if (filters.sessionId && filters.sessionId !== 'ALL_SESSIONS') where.sessionId = filters.sessionId;
+    if (filters.classId && filters.classId !== 'ALL_CLASSES') where.classId = filters.classId;
+    if (filters.batchId && filters.batchId !== 'ALL_BATCHES') where.batchId = filters.batchId;
+    if (filters.sectionId && filters.sectionId !== 'ALL_SECTIONS') where.sectionId = filters.sectionId;
+    if (filters.status && filters.status !== 'NONE') where.status = filters.status;
+    if (filters.gender && filters.gender !== 'ALL') where['personal.gender'] = filters.gender;
 
     const students = await prisma.student.findMany({
       where,
@@ -199,10 +199,10 @@ export async function getAttendanceReportData(filters: ReportFilters) {
       where: {
         ...dateFilter,
         student: {
-          sessionId: filters.sessionId || undefined,
-          classId: filters.classId || undefined,
-          batchId: filters.batchId || undefined,
-          sectionId: filters.sectionId || undefined,
+          sessionId: (filters.sessionId && filters.sessionId !== 'ALL_SESSIONS') ? filters.sessionId : undefined,
+          classId: (filters.classId && filters.classId !== 'ALL_CLASSES') ? filters.classId : undefined,
+          batchId: (filters.batchId && filters.batchId !== 'ALL_BATCHES') ? filters.batchId : undefined,
+          sectionId: (filters.sectionId && filters.sectionId !== 'ALL_SECTIONS') ? filters.sectionId : undefined,
         },
       },
       include: {
@@ -317,14 +317,14 @@ export async function getFinanceReportData(filters: ReportFilters) {
     }
 
     const where: any = { ...dateFilter };
-    if (filters.paymentStatus) where.status = filters.paymentStatus;
+    if (filters.paymentStatus && filters.paymentStatus !== 'ALL') where.status = filters.paymentStatus;
     if (filters.sessionId || filters.classId || filters.batchId) {
       where.student = {};
-      if (filters.sessionId) where.student.sessionId = filters.sessionId;
-      if (filters.classId) where.student.classId = filters.classId;
-      if (filters.batchId) where.student.batchId = filters.batchId;
+      if (filters.sessionId && filters.sessionId !== 'ALL_SESSIONS') where.student.sessionId = filters.sessionId;
+      if (filters.classId && filters.classId !== 'ALL_CLASSES') where.student.classId = filters.classId;
+      if (filters.batchId && filters.batchId !== 'ALL_BATCHES') where.student.batchId = filters.batchId;
     }
-    if (filters.feeType) {
+    if (filters.feeType && filters.feeType !== 'ALL') {
       where.feeMaster = { type: filters.feeType };
     }
 

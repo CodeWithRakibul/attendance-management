@@ -1,5 +1,4 @@
 import { prisma } from '@/lib/prisma'
-import { ExamStatus } from '@prisma/client'
 
 // Exam CRUD
 export async function createExam(data: {
@@ -34,7 +33,7 @@ export async function getExamById(id: string) {
   return await prisma.exam.findUnique({
     where: { id },
     include: {
-        type: true, // No, wait, type is not generic.
+
         schedules: {
             include: {
                 class: true
@@ -78,7 +77,7 @@ export async function getExamSchedule(id: string) {
                 include: {
                     student: {
                         include: {
-                            personal: true
+
                         }
                     }
                 }

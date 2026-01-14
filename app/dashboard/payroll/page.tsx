@@ -47,7 +47,7 @@ export default async function PayrollPage() {
                                         {data.map((payment) => (
                                             <tr key={payment.id} className="border-b last:border-0 hover:bg-gray-50">
                                                 <td className="px-4 py-3 font-medium">
-                                                    {payment.teacher.personal?.nameEn || 'Unknown'}
+                                                    {(payment.teacher.personal as any)?.nameEn || 'Unknown'}
                                                     <span className="block text-xs text-gray-500">{payment.teacher.staffId}</span>
                                                 </td>
                                                 <td className="px-4 py-3 ">{payment.teacher.designation}</td>

@@ -8,7 +8,10 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { IconCheck, IconX, IconClock, IconDeviceFloppy } from '@tabler/icons-react';
-import { getStaffForAttendance, markStaffAttendance } from './actions';
+import { 
+    getStaffForAttendanceAction, 
+    markBatchStaffAttendanceAction 
+} from '@/actions/attendance';
 import { toast } from 'sonner';
 
 type AttendanceStatus = 'PRESENT' | 'ABSENT' | 'LEAVE';
@@ -16,11 +19,7 @@ type AttendanceStatus = 'PRESENT' | 'ABSENT' | 'LEAVE';
 type StaffForAttendance = {
     id: string;
     teacherId: string;
-    personal: {
-        nameEn: string;
-        nameBn?: string;
-        photoUrl?: string;
-    };
+    personal: any;
     designation: string;
     status: AttendanceStatus;
     checkInTime?: string;
@@ -40,7 +39,7 @@ export function StaffAttendanceForm() {
     const loadStaff = async () => {
         setLoading(true);
         try {
-            const data = await getStaffForAttendance(selectedDate);
+            const data = await getStaffForAttendanceAction(selectedDate);
 
             // Initialize with existing attendance or default to PRESENT
             const staffWithStatus = data.map((member: any) => ({
@@ -81,15 +80,27 @@ export function StaffAttendanceForm() {
     const handleSaveAttendance = async () => {
         setSaving(true);
         try {
-            const attendanceData = staff.map((member) => ({
-                staffId: member.id,
-                date: selectedDate,
-                status: member.status,
-                checkInTime: member.checkInTime || null,
-                checkOutTime: member.checkOutTime || null
-            }));
+            const attendanceData = staff.map((member) => {
+                let checkIn = undefined;
+                let checkOut = undefined;
+                
+                if (member.checkInTime) {
+                   checkIn = new Date(`${selectedDate}T${member.checkInTime}`);
+                }
+                if (member.checkOutTime) {
+                   checkOut = new Date(`${selectedDate}T${member.checkOutTime}`);
+                }
 
-            await markStaffAttendance(attendanceData);
+                return {
+                    staffId: member.id,
+                    date: new Date(selectedDate),
+                    status: member.status,
+                    checkIn: checkIn,
+                    checkOut: checkOut
+                };
+            });
+
+            await markBatchStaffAttendanceAction(attendanceData);
             toast.success('Staff attendance saved successfully');
         } catch (error) {
             toast.error('Failed to save staff attendance');
@@ -209,7 +220,7 @@ export function StaffAttendanceForm() {
                                         <AvatarFallback>
                                             {(member.personal?.nameEn || 'User')
                                                 .split(' ')
-                                                .map((n) => n.charAt(0))
+                                                .map((n: string) => n.charAt(0))
                                                 .join('')
                                                 .toUpperCase()}
                                         </AvatarFallback>

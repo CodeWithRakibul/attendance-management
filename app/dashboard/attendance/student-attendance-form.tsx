@@ -17,12 +17,14 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { IconCheck, IconX, IconClock, IconDeviceFloppy } from '@tabler/icons-react';
 import {
-    getSessions,
-    getClasses,
-    getBatches,
-    getStudentsForAttendance,
-    markStudentAttendance
-} from './actions';
+    getSessionsAction,
+    getClassesAction
+} from '@/actions/academics';
+import { getBatches } from '@/actions/student';
+import { 
+    getStudentsForAttendanceAction, 
+    markBatchAttendanceAction 
+} from '@/actions/attendance';
 import { toast } from 'sonner';
 
 type AttendanceStatus = 'PRESENT' | 'ABSENT' | 'LATE';
@@ -31,11 +33,7 @@ type StudentForAttendance = {
     id: string;
     studentId: string;
     roll: string;
-    personal: {
-        nameEn: string;
-        nameBn?: string;
-        photoUrl?: string;
-    };
+    personal: any; // Using any for Json type to avoid complexity here
     status: AttendanceStatus;
 };
 
@@ -77,8 +75,9 @@ export function StudentAttendanceForm() {
 
     const loadSessions = async () => {
         try {
-            const data = await getSessions();
+            const data = await getSessionsAction();
             setSessions(data);
+            if (data.length === 1) setSelectedSession(data[0].id); // Auto select if only one
         } catch (error) {
             toast.error('Failed to load sessions');
         }
@@ -86,7 +85,7 @@ export function StudentAttendanceForm() {
 
     const loadClasses = async (sessionId: string) => {
         try {
-            const data = await getClasses(sessionId);
+            const data = await getClassesAction(sessionId);
             setClasses(data);
             setSelectedClass('');
             setSelectedBatch('');
@@ -108,7 +107,7 @@ export function StudentAttendanceForm() {
     const loadStudents = async () => {
         setLoading(true);
         try {
-            const data = await getStudentsForAttendance({
+            const data = await getStudentsForAttendanceAction({
                 sessionId: selectedSession,
                 classId: selectedClass,
                 batchId: selectedBatch,
@@ -144,12 +143,14 @@ export function StudentAttendanceForm() {
         try {
             const attendanceData = students.map((student) => ({
                 studentId: student.id,
+                sessionId: selectedSession,
                 batchId: selectedBatch,
-                date: selectedDate,
-                status: student.status
+                date: new Date(selectedDate),
+                status: student.status,
+                markedBy: 'SYSTEM' // You might want to get the actual user ID here
             }));
 
-            await markStudentAttendance(attendanceData);
+            await markBatchAttendanceAction(attendanceData);
             toast.success('Attendance saved successfully');
         } catch (error) {
             toast.error('Failed to save attendance');
@@ -325,7 +326,7 @@ export function StudentAttendanceForm() {
                                         <AvatarFallback>
                                             {student.personal.nameEn
                                                 .split(' ')
-                                                .map((n) => n.charAt(0))
+                                                .map((n: string) => n.charAt(0))
                                                 .join('')
                                                 .toUpperCase()}
                                         </AvatarFallback>

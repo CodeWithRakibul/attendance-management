@@ -1,6 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { prisma } from '@/lib/prisma'
 import { 
   markStudentAttendance, 
   markBatchAttendance, 
@@ -10,6 +11,120 @@ import {
 } from '@/queries/attendance'
 import type { AttendanceFormData } from '@/types'
 import { AttendanceStatus } from '@prisma/client'
+
+// Fetch students with their attendance status for a specific date
+export async function getStudentsForAttendanceAction(params: {
+  sessionId: string;
+  classId: string;
+  batchId: string;
+  date: string; // ISO string YYYY-MM-DD
+}) {
+  try {
+    const { sessionId, classId, batchId, date } = params
+
+    // 1. Fetch Students
+    const students = await prisma.student.findMany({
+      where: {
+        sessionId,
+        classId,
+        batchId,
+        status: 'ACTIVE'
+      },
+      orderBy: { roll: 'asc' }, // Assuming 'roll' is sortable string/number
+      select: {
+        id: true,
+        studentId: true,
+        roll: true,
+        personal: true,
+      }
+    })
+
+    // 2. Fetch Attendance for this date
+    // Create date range for the day
+    const queryDate = new Date(date)
+    const startOfDay = new Date(queryDate.setHours(0, 0, 0, 0))
+    const endOfDay = new Date(queryDate.setHours(23, 59, 59, 999))
+
+    const attendanceRecords = await prisma.attendanceStudent.findMany({
+      where: {
+        studentId: { in: students.map(s => s.id) },
+        date: {
+          gte: startOfDay,
+          lte: endOfDay
+        }
+      }
+    })
+
+    // 3. Merge
+    const studentsWithStatus = students.map(student => {
+      const record = attendanceRecords.find(r => r.studentId === student.id)
+      return {
+        ...student,
+        attendanceStatus: record ? record.status : null
+      }
+    })
+
+    return studentsWithStatus
+
+  } catch (error) {
+    console.error('Failed to get students for attendance', error)
+    throw new Error('Failed to fetch students')
+  }
+}
+
+
+// Fetch staff with their attendance status for a specific date
+export async function getStaffForAttendanceAction(date: string) {
+  try {
+    // 1. Fetch Active Staff (Teachers)
+    const staff = await prisma.teacher.findMany({
+      where: {
+        status: 'ACTIVE'
+      },
+      orderBy: { staffId: 'asc' },
+      select: {
+        id: true,
+        staffId: true,
+        designation: true,
+        personal: true,
+      }
+    })
+
+    // 2. Fetch Attendance for this date
+    const queryDate = new Date(date)
+    const startOfDay = new Date(queryDate.setHours(0, 0, 0, 0))
+    const endOfDay = new Date(queryDate.setHours(23, 59, 59, 999))
+
+    const attendanceRecords = await prisma.attendanceStaff.findMany({
+      where: {
+        staffId: { in: staff.map(s => s.id) },
+        date: {
+          gte: startOfDay,
+          lte: endOfDay
+        }
+      }
+    })
+
+    // 3. Merge
+    const staffWithStatus = staff.map(member => {
+      const record = attendanceRecords.find(r => r.staffId === member.id)
+      return {
+        ...member,
+        attendanceStatus: record ? record.status : null,
+        checkInTime: record?.checkIn ? new Date(record.checkIn).toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' }) : null,
+        checkOutTime: record?.checkOut ? new Date(record.checkOut).toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' }) : null,
+      }
+    })
+
+    return staffWithStatus
+
+  } catch (error) {
+    console.error('Failed to get staff for attendance', error)
+    throw new Error('Failed to fetch staff')
+  }
+}
+
+
 
 export async function markStudentAttendanceAction(data: Omit<AttendanceFormData, 'date'> & { date: Date }) {
   try {
@@ -43,6 +158,31 @@ export async function markStaffAttendanceAction(data: {
     revalidatePath('/dashboard/attendance')
     return { success: true }
   } catch (error) {
+    return { success: false, error: 'Failed to mark staff attendance' }
+  }
+}
+
+export async function markBatchStaffAttendanceAction(attendanceData: Array<{
+  staffId: string
+  date: Date
+  status: AttendanceStatus
+  checkIn?: Date
+  checkOut?: Date
+}>) {
+  try {
+    await prisma.$transaction(
+      attendanceData.map(data => 
+          prisma.attendanceStaff.upsert({
+              where: { staffId_date: { staffId: data.staffId, date: data.date } },
+              update: { status: data.status, checkIn: data.checkIn, checkOut: data.checkOut },
+              create: data
+          })
+      )
+   )
+    revalidatePath('/dashboard/attendance')
+    return { success: true }
+  } catch (error) {
+    console.error('Failed to mark batch staff attendance', error)
     return { success: false, error: 'Failed to mark staff attendance' }
   }
 }

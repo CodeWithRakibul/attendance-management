@@ -5,7 +5,7 @@ export async function POST(request: NextRequest) {
   try {
     const { username, password } = await request.json()
     
-    const user = authenticateUser(username, password)
+    const user = await authenticateUser(username, password)
     
     if (user) {
       return NextResponse.json(user)

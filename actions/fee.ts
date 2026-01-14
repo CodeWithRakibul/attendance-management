@@ -1,5 +1,7 @@
 'use server'
 
+import { getSession } from '@/lib/session'
+
 import { revalidatePath } from 'next/cache'
 import {
     createFeeMaster,
@@ -49,19 +51,23 @@ export async function collectFeeAction(data: FeeCollectionFormData) {
     try {
         const validated = feeCollectionSchema.parse(data)
 
-        // TODO: Get actual logged in user ID. For now, using first active teacher/admin.
-        const collector = await prisma.teacher.findFirst({
-            where: { status: 'ACTIVE' },
-            select: { id: true }
+        const session = await getSession()
+        if (!session) {
+            return { success: false, error: 'Unauthorized' }
+        }
+
+        const user = await prisma.user.findUnique({
+            where: { id: session.id },
+            select: { teacherId: true }
         })
 
-        if (!collector) {
-            return { success: false, error: 'No active staff found to collect fee' }
+        if (!user?.teacherId) {
+            return { success: false, error: 'Only staff members can collect fees' }
         }
 
         await createCollection({
             ...validated,
-            collectedBy: collector.id
+            collectedBy: user.teacherId
         })
 
         revalidatePath('/dashboard/fees/collection')

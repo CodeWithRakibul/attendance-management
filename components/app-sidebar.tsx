@@ -8,7 +8,9 @@ import {
     IconSearch,
     IconSettings,
     IconUserCheck,
-    IconUsers
+    IconUsers,
+    IconBook,
+    IconCoin
 } from '@tabler/icons-react';
 import { NavMain } from '@/components/nav-main';
 import { NavSecondary } from '@/components/nav-secondary';
@@ -55,6 +57,16 @@ const data = {
             title: 'Reports',
             url: '/dashboard/reports',
             icon: IconReport
+        },
+        {
+            title: 'Fees',
+            url: '/dashboard/fees',
+            icon: IconCoin
+        },
+        {
+            title: 'Exams',
+            url: '/dashboard/exams',
+            icon: IconBook
         }
     ],
     navSecondary: [

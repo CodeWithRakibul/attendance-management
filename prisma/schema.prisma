@@ -24,6 +24,7 @@ model Session {
   classes      Class[]
   batches      Batch[]
   sections     Section[]
+  exams        Exam[]
 }
 
 // Academic Structure
@@ -38,6 +39,7 @@ model Class {
   students  Student[]
   batches   Batch[]
   sections  Section[]
+  examSchedules ExamSchedule[]
 }
 
 model Batch {
@@ -100,6 +102,8 @@ model Student {
   notes         StudentNote[]
   collections   Collection[]
   attendanceStudent AttendanceStudent[]
+  user          User?
+  examMarks     ExamMark[]
 }
 
 model StudentNote {
@@ -148,6 +152,8 @@ model Teacher {
   notes         StudentNote[]
   attendanceStaff AttendanceStaff[]
   collections   Collection[]
+  user          User?
+  salaryPayments SalaryPayment[]
 }
 
 model TeacherLeave {
@@ -238,6 +244,79 @@ model Collection {
 }
 
 
+// Examination
+model Exam {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  sessionId String   @db.ObjectId
+  startDate DateTime
+  endDate   DateTime
+  status    ExamStatus @default(UPCOMING)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  session   Session   @relation(fields: [sessionId], references: [id])
+  schedules ExamSchedule[]
+}
+
+model ExamSchedule {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  examId    String   @db.ObjectId
+  classId   String   @db.ObjectId
+  subject   String
+  date      DateTime
+  startTime String
+  endTime   String
+  fullMark  Float
+  
+  exam      Exam    @relation(fields: [examId], references: [id])
+  class     Class   @relation(fields: [classId], references: [id])
+  marks     ExamMark[]
+}
+
+model ExamMark {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  examScheduleId String @db.ObjectId
+  studentId String   @db.ObjectId
+  marksObtained Float
+  isAbsent  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  examSchedule ExamSchedule @relation(fields: [examScheduleId], references: [id])
+  student      Student      @relation(fields: [studentId], references: [id])
+
+  @@unique([examScheduleId, studentId])
+}
+
+model SalaryPayment {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  teacherId   String   @db.ObjectId
+  month       String
+  amount      Float
+  paymentDate DateTime
+  status      PaymentStatus @default(PAID)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  teacher     Teacher  @relation(fields: [teacherId], references: [id])
+}
+
+// Authentication
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  username  String   @unique
+  password  String
+  role      UserRole
+  teacherId String?  @unique @db.ObjectId
+  studentId String?  @unique @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  teacher   Teacher? @relation(fields: [teacherId], references: [id])
+  student   Student? @relation(fields: [studentId], references: [id])
+}
+
 // Enums
 enum SessionStatus {
   ACTIVE
@@ -298,6 +377,19 @@ enum CollectionStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+enum ExamStatus {
+  UPCOMING
+  ONGOING
+  COMPLETED
+  PUBLISHED
+}
+
+enum PaymentStatus {
+  PAID
+  PENDING
+  FAILED
 }
 
 enum UserRole {

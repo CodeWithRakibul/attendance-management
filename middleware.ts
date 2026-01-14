@@ -1,17 +1,30 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { updateSession } from '@/lib/session'
+import { getSession } from '@/lib/session'
 
-export function middleware(request: NextRequest) {
-  // For demo, just redirect to login if accessing dashboard without being logged in
-  // In a real app, you'd check for valid session/token
+export async function middleware(request: NextRequest) {
+  // Update session expiration if valid
+  await updateSession(request)
+
   if (request.nextUrl.pathname.startsWith('/dashboard')) {
-    // Simple check - in real app you'd verify actual auth token
-    return NextResponse.next()
+    const session = await getSession()
+    if (!session) {
+      return NextResponse.redirect(new URL('/login', request.url))
+    }
   }
-  
+
+  // Redirect to dashboard if already logged in and accessing login page
+  if (request.nextUrl.pathname.startsWith('/login')) {
+    const session = await getSession()
+    if (session) {
+      return NextResponse.redirect(new URL('/dashboard', request.url))
+    }
+  }
+
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*']
+  matcher: ['/dashboard/:path*', '/login'],
 }

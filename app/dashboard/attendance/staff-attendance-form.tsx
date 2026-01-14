@@ -204,7 +204,7 @@ export function StaffAttendanceForm() {
                                     <Avatar className='h-10 w-10'>
                                         <AvatarImage
                                             src={member.personal.photoUrl}
-                                            alt={member.personal.nameEn}
+                                            alt={member.personal?.nameEn || 'Staff'}
                                         />
                                         <AvatarFallback>
                                             {(member.personal?.nameEn || 'User')

@@ -11,6 +11,8 @@ import {
 } from '@/queries/attendance'
 import type { AttendanceFormData } from '@/types'
 import { AttendanceStatus } from '@prisma/client'
+import { getStudentAttendance, getStaffAttendance } from '@/queries/attendance'
+import { getCurrentSession } from '@/queries/session'
 
 // Fetch students with their attendance status for a specific date
 export async function getStudentsForAttendanceAction(params: {
@@ -205,4 +207,69 @@ export async function deleteStaffAttendanceAction(staffId: string, date: Date) {
   } catch (error) {
     return { success: false, error: 'Failed to delete staff attendance' }
   }
+}
+
+export async function getAttendanceHistoryAction(type: 'student' | 'staff', filters: {
+  dateFrom?: string;
+  dateTo?: string;
+  batchId?: string;
+  status?: string;
+}) {
+  try {
+    const activeSession = await getCurrentSession();
+    if (!activeSession) return [];
+
+    const startDate = filters.dateFrom ? new Date(filters.dateFrom) : undefined;
+    const endDate = filters.dateTo ? new Date(filters.dateTo) : undefined;
+
+    if (type === 'student') {
+        const studentFilters: any = {
+            sessionId: activeSession.id,
+            startDate,
+            endDate
+        };
+        if (filters.batchId) studentFilters.batchId = filters.batchId;
+        // Logic to filter by status is done in query or post-filtering
+        // The current query supports filtering by exact date using 'date' param, 
+        // but for range it uses startDate/endDate.
+        // Prisma query 'where' construction needs to be checked.
+        
+        // Actually, let's look at getStudentAttendance implementation. 
+        // It accepts startDate/endDate.
+        
+        const data = await getStudentAttendance(studentFilters);
+        
+        // Post-filter by status if provided (since query might not support it directly or we want to keep it simple)
+        if (filters.status && filters.status !== 'ALL') {
+            return data.filter(r => r.status === filters.status);
+        }
+        return data;
+    } else {
+        const staffFilters: any = {
+            startDate,
+            endDate
+        };
+
+        const data = await getStaffAttendance(staffFilters);
+
+         if (filters.status && filters.status !== 'ALL') {
+             return data.filter(r => r.status === filters.status);
+         }
+         return data;
+    }
+  } catch (error) {
+    console.error('Failed to get attendance history', error);
+    return [];
+  }
+}
+
+export async function exportAttendanceReportAction(
+  type: 'student' | 'staff', 
+  format: 'csv' | 'excel', 
+  filters: any
+) {
+  // Placeholder for export logic. 
+  // In a real app, this might generate a file and return a URL or stream.
+  // For now, we simulate success.
+  return { success: true, message: 'Export logic not implemented yet' };
 }

@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { getSessionsAction } from '@/actions/academics';
-import { SessionsPageContent } from './components/sessions-page-content';
+import { SessionsPageContent } from './_components/sessions-page-content';
 
 export default async function SessionsPage() {
     const sessions = await getSessionsAction();

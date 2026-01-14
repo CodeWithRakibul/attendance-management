@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
-import { StudentsPageContent } from './components/students-page-content';
-import { StudentsPageSkeleton } from './components/students-page-skeleton';
+import { StudentsPageContent } from './_components/students-page-content';
+import { StudentsPageSkeleton } from './_components/students-page-skeleton';
 
 export default async function StudentsPage({
     searchParams

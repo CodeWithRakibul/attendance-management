@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { IconX, IconPlus } from '@tabler/icons-react';
 import { toast } from 'sonner';
-import { updateTeacher, TeacherCreateFormData } from '../actions';
+import { updateTeacher, TeacherCreateFormData } from '../../actions';
 
 interface TeacherEditFormProps {
   teacher: any;
@@ -326,7 +326,7 @@ export function TeacherEditForm({ teacher, onCancel, onComplete }: TeacherEditFo
                 </Button>
               </div>
               <div className="flex flex-wrap gap-1 mt-2">
-                {formData.subjects.map((subject, index) => (
+                {formData.subjects.map((subject: string, index: number) => (
                   <Badge key={index} variant="secondary" className="text-xs">
                     {subject}
                     <button

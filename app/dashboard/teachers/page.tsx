@@ -1,8 +1,8 @@
 import { Suspense } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { IconUsers } from '@tabler/icons-react';
-import { TeachersTable } from './teachers-table';
-import { Teacher } from './columns';
+import { TeachersTable } from './_components/teachers-table';
+import { Teacher } from './_components/columns';
 import { getTeachers, getTeacherStats } from '@/queries';
 
 export default async function TeachersPage() {

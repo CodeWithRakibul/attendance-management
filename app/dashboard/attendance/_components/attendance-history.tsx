@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { IconDownload, IconFilter } from '@tabler/icons-react';
 import { DataTable } from '@/components/Table/data-table';
-import { getAttendanceHistory, exportAttendanceReport } from './actions';
+import { getAttendanceHistoryAction, exportAttendanceReportAction } from '@/actions/attendance';
 import { toast } from 'sonner';
 
 type StudentAttendanceRecord = {
@@ -72,12 +72,12 @@ export function AttendanceHistory() {
       };
 
       const [studentData, staffData] = await Promise.all([
-        getAttendanceHistory('student', filters),
-        getAttendanceHistory('staff', filters),
+        getAttendanceHistoryAction('student', filters),
+        getAttendanceHistoryAction('staff', filters),
       ]);
 
-      setStudentHistory(studentData as StudentAttendanceRecord[]);
-      setStaffHistory(staffData as StaffAttendanceRecord[]);
+      setStudentHistory(studentData as unknown as StudentAttendanceRecord[]);
+      setStaffHistory(staffData as unknown as StaffAttendanceRecord[]);
     } catch (error) {
       toast.error('Failed to load attendance history');
     } finally {
@@ -94,7 +94,7 @@ export function AttendanceHistory() {
         status: selectedStatus !== 'ALL' ? selectedStatus : undefined,
       };
 
-      await exportAttendanceReport(type, format, filters);
+      await exportAttendanceReportAction(type, format, filters);
       toast.success(`${type} attendance report exported successfully`);
     } catch (error) {
       toast.error('Failed to export report');

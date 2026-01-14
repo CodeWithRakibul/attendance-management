@@ -14,7 +14,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { IconCalendar, IconPlus, IconCheck, IconX, IconClock, IconFileText } from '@tabler/icons-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
-import { createTeacherLeave, getTeacherLeaves, updateTeacherLeave } from '../actions';
+import { createTeacherLeave, getTeacherLeaves, updateTeacherLeave } from '../../actions';
 
 interface TeacherLeavesTabProps {
   teacherId: string;

@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { getSessionsAction, getClassesAction } from '@/actions/academics';
-import { ClassesPageContent } from './components/classes-page-content';
+import { ClassesPageContent } from './_components/classes-page-content';
 import { getSessions, getCurrentSession } from '@/queries/session';
 
 export default async function ClassesPage({

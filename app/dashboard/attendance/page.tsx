@@ -3,9 +3,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { IconCalendar, IconUsers, IconUserCheck, IconClock } from '@tabler/icons-react';
-import { StudentAttendanceForm } from './student-attendance-form';
-import { StaffAttendanceForm } from './staff-attendance-form';
-import { AttendanceHistory } from './attendance-history';
+import { StudentAttendanceForm } from './_components/student-attendance-form';
+import { StaffAttendanceForm } from './_components/staff-attendance-form';
+import { AttendanceHistory } from './_components/attendance-history';
 
 export default async function AttendancePage() {
     return (

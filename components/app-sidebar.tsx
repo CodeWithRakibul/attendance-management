@@ -10,7 +10,9 @@ import {
     IconUserCheck,
     IconUsers,
     IconBook,
-    IconCoin
+    IconCoin,
+    IconCalendar,
+    IconSchool
 } from '@tabler/icons-react';
 import { NavMain } from '@/components/nav-main';
 import { NavSecondary } from '@/components/nav-secondary';
@@ -42,6 +44,16 @@ const data = {
             title: 'Students',
             url: '/dashboard/students',
             icon: IconUsers
+        },
+        {
+            title: 'Sessions',
+            url: '/dashboard/academics/sessions',
+            icon: IconCalendar
+        },
+        {
+            title: 'Classes',
+            url: '/dashboard/academics/classes',
+            icon: IconSchool
         },
         // {
         //     title: 'Shifts',

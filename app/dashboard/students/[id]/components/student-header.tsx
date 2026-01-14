@@ -31,7 +31,29 @@ export function StudentHeader({ student }: StudentHeaderProps) {
           <div>
             <h1 className="text-2xl font-bold">{personal?.nameEn}</h1>
             <p className="text-muted-foreground">{personal?.nameBn}</p>
-            <Badge variant="outline">ID: {student.studentId}</Badge>
+            <div className="flex gap-2 mt-1">
+              <Badge variant="outline">ID: {student.studentId}</Badge>
+              {/* Smart Profile Badge */}
+              {(() => {
+                const income = (student.guardian as any)?.annualIncome || 0
+                let badgeColor = "bg-gray-100 text-gray-800"
+                let label = "Standard Profile"
+
+                if (income >= 1000000) {
+                  badgeColor = "bg-yellow-100 text-yellow-800 border-yellow-200"
+                  label = "Gold Profile"
+                } else if (income >= 500000) {
+                  badgeColor = "bg-slate-100 text-slate-800 border-slate-200"
+                  label = "Silver Profile"
+                }
+
+                return (
+                  <Badge variant="outline" className={badgeColor}>
+                    {label}
+                  </Badge>
+                )
+              })()}
+            </div>
           </div>
         </div>
       </div>

@@ -207,7 +207,7 @@ export function StaffAttendanceForm() {
                                             alt={member.personal.nameEn}
                                         />
                                         <AvatarFallback>
-                                            {member.personal.nameEn
+                                            {(member.personal?.nameEn || 'User')
                                                 .split(' ')
                                                 .map((n) => n.charAt(0))
                                                 .join('')
@@ -216,7 +216,7 @@ export function StaffAttendanceForm() {
                                     </Avatar>
 
                                     <div>
-                                        <div className='font-medium'>{member.personal.nameEn}</div>
+                                        <div className='font-medium'>{member.personal?.nameEn || 'Unknown Staff'}</div>
                                         {member.personal.nameBn && (
                                             <div className='text-sm text-muted-foreground'>
                                                 {member.personal.nameBn}

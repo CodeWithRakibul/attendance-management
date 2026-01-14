@@ -9,8 +9,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { ArrowLeft, Save, User, Users, MapPin } from 'lucide-react'
+import { ArrowLeft, Save, User, Users, MapPin, CheckCircle2 } from 'lucide-react'
 import { createStudentAction, getCurrentSession, getClasses, getBatches, getSections } from '@/actions/student'
 import { studentSchema, type StudentFormData } from '@/lib/validations'
 import SubmitButton from '@/components/submit-button'
@@ -43,6 +44,7 @@ export default function StudentCreatePage() {
                 motherName: '',
                 fatherOccupation: '',
                 motherOccupation: '',
+                annualIncome: 0,
                 contact: {
                     smsNo: '',
                     altNo: '',
@@ -407,6 +409,19 @@ export default function StudentCreatePage() {
                                     />
                                     <FormField
                                         control={form.control}
+                                        name="guardian.annualIncome"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Annual Income</FormLabel>
+                                                <FormControl>
+                                                    <Input type="number" {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
                                         name="guardian.contact.smsNo"
                                         render={({ field }) => (
                                             <FormItem>
@@ -484,6 +499,42 @@ export default function StudentCreatePage() {
                                                 <Textarea {...field} placeholder="Leave empty if same as present address" />
                                             </FormControl>
                                             <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </CardContent>
+                        </Card>
+
+                        {/* Admission Settings */}
+                        <Card className="shadow-sm border-0 bg-white !pt-0">
+                            <CardHeader className="bg-gradient-to-r from-gray-50 !py-3 to-slate-50 border-b">
+                                <CardTitle className="flex items-center gap-3 text-lg">
+                                    <div className="p-2 bg-gray-100 rounded-lg">
+                                        <CheckCircle2 className="h-5 w-5 text-gray-600" />
+                                    </div>
+                                    Admission Settings
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="pt-6">
+                                <FormField
+                                    control={form.control}
+                                    name="continuityTick"
+                                    render={({ field }) => (
+                                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                                            <FormControl>
+                                                <Checkbox
+                                                    checked={field.value}
+                                                    onCheckedChange={field.onChange}
+                                                />
+                                            </FormControl>
+                                            <div className="space-y-1 leading-none">
+                                                <FormLabel>
+                                                    Continuity Checkbox
+                                                </FormLabel>
+                                                <p className="text-sm text-muted-foreground">
+                                                    Check this if the student is booking for the next year/session.
+                                                </p>
+                                            </div>
                                         </FormItem>
                                     )}
                                 />

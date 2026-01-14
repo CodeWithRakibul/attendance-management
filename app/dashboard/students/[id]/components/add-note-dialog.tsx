@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { IconLoader2, IconNotes } from '@tabler/icons-react';
-import { addStudentNoteAction } from '@/actions';
+import { addStudentNoteAction } from '@/actions/student-note';
 import { toast } from 'sonner';
 
 interface AddNoteDialogProps {
@@ -31,7 +31,6 @@ export function AddNoteDialog({ studentId, open, onOpenChange }: AddNoteDialogPr
       try {
         const result = await addStudentNoteAction({
           studentId,
-          staffId: 'temp-staff-id', // TODO: Get from auth context
           note: note.trim()
         });
 

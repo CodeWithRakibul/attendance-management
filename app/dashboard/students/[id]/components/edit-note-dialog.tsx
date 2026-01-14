@@ -1,11 +1,9 @@
-'use client';
-
-import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { updateStudentNoteAction } from '@/actions/student';
-import { toast } from 'sonner';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { useState } from "react";
+import { updateStudentNoteAction } from "@/actions/student-note";
 
 interface EditNoteDialogProps {
   noteId: string;
@@ -24,7 +22,7 @@ export function EditNoteDialog({ noteId, currentNote, open, onOpenChange }: Edit
 
     setLoading(true);
     const result = await updateStudentNoteAction(noteId, note.trim());
-    
+
     if (result.success) {
       toast.success('Note updated successfully');
       onOpenChange(false);

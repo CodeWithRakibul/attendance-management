@@ -20,6 +20,7 @@ export const studentSchema = z.object({
     motherName: z.string().min(1, "Mother's name is required"),
     fatherOccupation: z.string().optional(),
     motherOccupation: z.string().optional(),
+    annualIncome: z.coerce.number().optional(),
     contact: z.object({
       smsNo: z.string().min(1, 'SMS number is required'),
       altNo: z.string().optional(),
@@ -35,3 +36,24 @@ export const studentSchema = z.object({
 })
 
 export type StudentFormData = z.infer<typeof studentSchema>
+
+export const feeMasterSchema = z.object({
+  sessionId: z.string().min(1, 'Session is required'),
+  name: z.string().min(1, 'Fee name is required'),
+  amount: z.coerce.number().min(0, 'Amount must be positive'),
+  type: z.enum(['ADMISSION', 'MONTHLY', 'EXAM', 'TRANSPORT', 'LIBRARY', 'LABORATORY', 'OTHER']),
+  dueDate: z.string().optional(),
+})
+
+export type FeeMasterFormData = z.infer<typeof feeMasterSchema>
+
+export const feeCollectionSchema = z.object({
+  studentId: z.string().min(1, 'Student is required'),
+  sessionId: z.string().min(1, 'Session is required'),
+  feeMasterId: z.string().min(1, 'Fee type is required'),
+  amount: z.coerce.number().min(0, 'Amount must be positive'),
+  method: z.enum(['CASH', 'BANK_TRANSFER', 'MOBILE_BANKING', 'CARD']),
+  receiptNo: z.string().optional(),
+})
+
+export type FeeCollectionFormData = z.infer<typeof feeCollectionSchema>

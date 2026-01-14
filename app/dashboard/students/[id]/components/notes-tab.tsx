@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { IconNotes, IconPlus } from '@tabler/icons-react';
 import { NoteCard } from './note-card';
-import { deleteStudentNoteAction } from '@/actions';
+import { deleteStudentNoteAction } from '@/actions/student-note';
 import { toast } from 'sonner';
 import { AlertModal } from '@/components/alert-modal';
 import { useState } from 'react';
@@ -32,16 +32,16 @@ export function NotesTab({ notes, onAddNote, onEditNote }: NotesTabProps) {
 
   const handleConfirmDelete = async () => {
     if (!noteToDelete) return;
-    
+
     setIsDeleting(true);
     const result = await deleteStudentNoteAction(noteToDelete);
-    
+
     if (result.success) {
       toast.success('Note deleted successfully');
     } else {
       toast.error(result.error || 'Failed to delete note');
     }
-    
+
     setIsDeleting(false);
     setIsDeleteModalOpen(false);
     setNoteToDelete(null);

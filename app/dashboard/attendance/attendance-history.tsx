@@ -54,8 +54,8 @@ export function AttendanceHistory() {
   // Filters
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
-  const [selectedBatch, setSelectedBatch] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState('');
+  const [selectedBatch, setSelectedBatch] = useState('ALL');
+  const [selectedStatus, setSelectedStatus] = useState('ALL');
 
   useEffect(() => {
     loadHistory();
@@ -67,8 +67,8 @@ export function AttendanceHistory() {
       const filters = {
         dateFrom: dateFrom || undefined,
         dateTo: dateTo || undefined,
-        batchId: selectedBatch || undefined,
-        status: selectedStatus || undefined,
+        batchId: selectedBatch !== 'ALL' ? selectedBatch : undefined,
+        status: selectedStatus !== 'ALL' ? selectedStatus : undefined,
       };
 
       const [studentData, staffData] = await Promise.all([
@@ -90,8 +90,8 @@ export function AttendanceHistory() {
       const filters = {
         dateFrom: dateFrom || undefined,
         dateTo: dateTo || undefined,
-        batchId: selectedBatch || undefined,
-        status: selectedStatus || undefined,
+        batchId: selectedBatch !== 'ALL' ? selectedBatch : undefined,
+        status: selectedStatus !== 'ALL' ? selectedStatus : undefined,
       };
 
       await exportAttendanceReport(type, format, filters);
@@ -234,7 +234,7 @@ export function AttendanceHistory() {
                   <SelectValue placeholder="All batches" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All batches</SelectItem>
+                  <SelectItem value="ALL">All batches</SelectItem>
                   {/* TODO: Load batches dynamically */}
                   <SelectItem value="morning">Morning</SelectItem>
                   <SelectItem value="evening">Evening</SelectItem>
@@ -249,7 +249,7 @@ export function AttendanceHistory() {
                   <SelectValue placeholder="All statuses" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All statuses</SelectItem>
+                  <SelectItem value="ALL">All statuses</SelectItem>
                   <SelectItem value="PRESENT">Present</SelectItem>
                   <SelectItem value="ABSENT">Absent</SelectItem>
                   <SelectItem value="LATE">Late</SelectItem>

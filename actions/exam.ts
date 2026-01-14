@@ -21,7 +21,7 @@ const scheduleSchema = z.object({
   fullMark: z.coerce.number().min(1, 'Full mark must be positive'),
 })
 
-export async function createExamAction(formData: FormData) {
+export async function createExamAction(prevState: any, formData: FormData) {
     const rawData = {
         name: formData.get('name'),
         sessionId: formData.get('sessionId'),
@@ -39,7 +39,7 @@ export async function createExamAction(formData: FormData) {
     }
 }
 
-export async function createScheduleAction(formData: FormData) {
+export async function createScheduleAction(prevState: any, formData: FormData) {
     const rawData = {
         examId: formData.get('examId'),
         classId: formData.get('classId'),

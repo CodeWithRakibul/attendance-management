@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server'
 import { updateSession } from '@/lib/session'
 import { getSession } from '@/lib/session'
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   // Update session expiration if valid
   await updateSession(request)
 
